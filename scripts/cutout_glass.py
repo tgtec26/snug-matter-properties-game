@@ -7,7 +7,7 @@ from PIL import Image, ImageFilter
 src, cols, rows, out, px = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], int(sys.argv[5])
 names = sys.argv[6:]
 im = Image.open(src).convert('RGBA'); W, H = im.size; p = im.load()
-obj = im.getchannel('A').point(lambda v: 255 if v >= 240 else 0).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.7))
+obj = im.getchannel('A').point(lambda v: 255 if v >= 200 else 0).filter(ImageFilter.GaussianBlur(1.0)).point(lambda v: 255 if v >= 150 else 0).filter(ImageFilter.GaussianBlur(0.7))
 core = obj.filter(ImageFilter.MinFilter(21)).filter(ImageFilter.GaussianBlur(3))  # 유리 안쪽(벽에서 떨어진 곳)
 c_ = core.load()
 o = obj.load()

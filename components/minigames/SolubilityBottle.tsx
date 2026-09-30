@@ -225,6 +225,23 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
             })}
           </div>
 
+          {/* 진행 안내 */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-4 rounded-2xl px-6 py-2 text-center shadow-xl" style={{ width: 600, background: 'rgba(14,28,42,.94)', border: '2px solid #fde047' }}>
+            <div className="flex items-center justify-center gap-2 text-[15px] font-bold">
+              {['실온 20 ℃ 최대량', '60 ℃ 최대량'].map((t, i) => {
+                const on = i === 0 ? rec.r20 === undefined : rec.r20 !== undefined && rec.r60 === undefined;
+                const done = i === 0 ? rec.r20 !== undefined : rec.r60 !== undefined;
+                return <span key={t} className={`rounded-full px-3 py-0.5 ${done ? 'bg-emerald-600' : on ? 'bg-amber-400 text-black' : 'bg-white/15 text-white/60'}`}>{i + 1}단계 · {t}</span>;
+              })}
+            </div>
+            <div className="mt-1 text-[21px] font-bold text-amber-100">
+              {subDone ? '기록 완료! 다음으로 넘어가요'
+                : rec.r20 === undefined ? '약숟가락으로 가루를 병에 넣고, 아래 판을 문질러 저어요. 안 녹고 남을 때까지 넣어요'
+                : !dipped ? '병을 끌어서 60 ℃ 물 비커에 담가요'
+                : '가루를 더 넣고 저어서, 60 ℃에서 녹는 최대량을 찾아요'}
+            </div>
+          </div>
+
           {/* 가루 통 + 약숟가락 */}
           <div className="absolute" style={{ left: 100, top: 470, width: 130, height: 120 }}>
             <svg width="130" height="120" viewBox="0 0 130 120" style={{ position: 'absolute', inset: 0 }}>
