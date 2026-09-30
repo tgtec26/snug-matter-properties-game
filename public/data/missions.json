@@ -1,235 +1,240 @@
 [
-  {
-    "id": "m0",
-    "title": "어느 게 철이지?",
-    "place": "고물상",
-    "npc": "scrap",
-    "kind": "tutorial",
-    "components": [
-      "iron",
-      "aluminum"
-    ],
-    "investigate": {
-      "kind": "density-solid",
-      "targets": [
-        "iron",
-        "aluminum"
-      ]
-    },
-    "steps": [],
-    "intro": [
-      "철 조각이랑 알루미늄 조각이 섞였는데 구별이 안 돼. 큰 조각·작은 조각이 다 있어서 더 헷갈려.",
-      "질량과 부피를 재서 밀도를 구해 봐!"
-    ],
-    "outro": [
-      "크기가 달라도 밀도는 같구나. 밀도는 물질마다 정해진 값이야."
-    ],
-    "pos": {
-      "x": 210,
-      "y": 560
-    }
+ {
+  "id": "m0",
+  "title": "어느 게 철이지?",
+  "place": "고물상",
+  "npc": "scrap",
+  "kind": "tutorial",
+  "components": [
+   "iron",
+   "aluminum"
+  ],
+  "investigate": {
+   "kind": "density-solid",
+   "targets": [
+    "iron",
+    "aluminum"
+   ]
   },
-  {
-    "id": "m1",
-    "title": "기름이 떴어요",
-    "place": "부엌",
-    "npc": "cook",
-    "kind": "required",
-    "components": [
-      "water",
-      "cooking-oil"
-    ],
-    "investigate": {
-      "kind": "density-liquid",
-      "targets": [
-        "water",
-        "cooking-oil"
-      ]
-    },
-    "steps": [
-      {
-        "method": "density",
-        "obtains": [
-          "cooking-oil"
-        ],
-        "leaves": [
-          "water"
-        ]
-      }
-    ],
-    "intro": [
-      "사골국 위에 기름이 둥둥 떴어요. 기름만 걷어 내고 싶은데 도와줄래요?"
-    ],
-    "outro": [
-      "기름이 깔끔하게 분리됐네요. 고마워요!"
-    ],
-    "pos": {
-      "x": 977,
-      "y": 321
-    }
-  },
-  {
-    "id": "m2",
-    "title": "흰 가루 두 가지",
-    "place": "실험실",
-    "npc": "researcher",
-    "kind": "required",
-    "components": [
-      "kno3",
-      "nacl"
-    ],
-    "investigate": {
-      "kind": "solubility",
-      "targets": [
-        "kno3",
-        "nacl"
-      ]
-    },
-    "steps": [
-      {
-        "method": "solubility",
-        "obtains": [
-          "kno3"
-        ],
-        "leaves": [
-          "nacl"
-        ]
-      }
-    ],
-    "intro": [
-      "시럽 병 속 흰 가루 두 가지가 섞였어. 질산 칼륨만 얻고 싶은데 방법을 찾아 줘."
-    ],
-    "outro": [
-      "질산 칼륨 결정을 얻었구나. 염화 나트륨은 용액에 남았어."
-    ],
-    "pos": {
-      "x": 206,
-      "y": 599
-    }
-  },
-  {
-    "id": "m3",
-    "title": "술에서 에탄올만",
-    "place": "양조장",
-    "npc": "brewer",
-    "kind": "required",
-    "components": [
-      "water",
-      "ethanol"
-    ],
-    "investigate": {
-      "kind": "heating",
-      "targets": [
-        "water",
-        "ethanol"
-      ]
-    },
-    "steps": [
-      {
-        "method": "boiling",
-        "obtains": [
-          "ethanol",
-          "water"
-        ]
-      }
-    ],
-    "intro": [
-      "소줏고리처럼 술에서 에탄올만 뽑아내 보겠나? 물과 에탄올은 잘 섞여서 층도 안 생기지."
-    ],
-    "outro": [
-      "에탄올 냄새가 진하군. 솜씨가 좋아!"
-    ],
-    "pos": {
-      "x": 1050,
-      "y": 638
-    }
-  },
-  {
-    "id": "m4",
-    "title": "네 가지가 섞였어요",
-    "place": "실험실",
-    "npc": "researcher",
-    "kind": "final",
-    "components": [
-      "water",
-      "olive-oil",
-      "ethanol",
-      "nacl"
-    ],
-    "investigate": {
-      "kind": "density-liquid",
-      "targets": [
-        "water",
-        "olive-oil"
-      ]
-    },
-    "steps": [
-      {
-        "method": "density",
-        "obtains": [
-          "olive-oil"
-        ],
-        "leaves": [
-          "water",
-          "ethanol",
-          "nacl"
-        ]
-      },
-      {
-        "method": "boiling",
-        "obtains": [
-          "ethanol",
-          "water"
-        ],
-        "leaves": [
-          "nacl"
-        ]
-      }
-    ],
-    "intro": [
-      "물, 올리브유, 소독용 에탄올, 정제 소금이 한 병에 섞였어. 순서를 잘 생각해서 모두 분리해 봐!"
-    ],
-    "outro": [
-      "모든 물질을 얻었어. 이제 어엿한 공방 기술자야!"
-    ],
-    "pos": {
-      "x": 489,
-      "y": 222
-    }
-  },
-  {
-    "id": "m5",
-    "title": "볍씨를 골라 주세요",
-    "place": "농가",
-    "npc": "farmer",
-    "kind": "optional",
-    "components": [
-      "rice",
-      "husk",
-      "saltwater"
-    ],
-    "investigate": null,
-    "steps": [
-      {
-        "method": "density",
-        "obtains": [
-          "husk"
-        ],
-        "leaves": [
-          "rice",
-          "saltwater"
-        ]
-      }
-    ],
-    "intro": [
-      "볍씨를 심으려는데 쭉정이가 섞였어. 소금물을 쓰면 된다던데?"
-    ],
-    "outro": [
-      "튼튼한 볍씨만 남았구나. 고맙다!"
-    ],
-    "pos": {
-      "x": 633,
-      "y": 688
-    }
+  "steps": [],
+  "intro": [
+   "철 조각이랑 알루미늄 조각이 섞였는데 구별이 안 돼. 큰 조각·작은 조각이 다 있어서 더 헷갈려.",
+   "질량과 부피를 재서 밀도를 구해 봐!"
+  ],
+  "outro": [
+   "크기가 달라도 밀도는 같구나. 밀도는 물질마다 정해진 값이야."
+  ],
+  "pos": {
+   "x": 210,
+   "y": 560
   }
+ },
+ {
+  "id": "m1",
+  "title": "기름이 떴어요",
+  "place": "부엌",
+  "npc": "cook",
+  "kind": "required",
+  "components": [
+   "water",
+   "cooking-oil"
+  ],
+  "investigate": {
+   "kind": "density-liquid",
+   "targets": [
+    "water",
+    "cooking-oil"
+   ]
+  },
+  "steps": [
+   {
+    "method": "density",
+    "obtains": [
+     "cooking-oil"
+    ],
+    "leaves": [
+     "water"
+    ]
+   }
+  ],
+  "intro": [
+   "사골국 위에 기름이 둥둥 떴어요. 기름만 걷어 내고 싶은데 도와줄래요?"
+  ],
+  "outro": [
+   "기름이 깔끔하게 분리됐네요. 고마워요!"
+  ],
+  "pos": {
+   "x": 977,
+   "y": 321
+  },
+  "choosePrompt": "물과 식용유를 분리하기 위해 어떤 문으로 들어가시겠습니까?"
+ },
+ {
+  "id": "m2",
+  "title": "흰 가루 두 가지",
+  "place": "실험실",
+  "npc": "researcher",
+  "kind": "required",
+  "components": [
+   "kno3",
+   "nacl"
+  ],
+  "investigate": {
+   "kind": "solubility",
+   "targets": [
+    "kno3",
+    "nacl"
+   ]
+  },
+  "steps": [
+   {
+    "method": "solubility",
+    "obtains": [
+     "kno3"
+    ],
+    "leaves": [
+     "nacl"
+    ]
+   }
+  ],
+  "intro": [
+   "시럽 병 속 흰 가루 두 가지가 섞였어. 질산 칼륨만 얻고 싶은데 방법을 찾아 줘."
+  ],
+  "outro": [
+   "질산 칼륨 결정을 얻었구나. 염화 나트륨은 용액에 남았어."
+  ],
+  "pos": {
+   "x": 206,
+   "y": 599
+  },
+  "choosePrompt": "질산 칼륨과 염화 나트륨을 분리하기 위해 어떤 문으로 들어가시겠습니까?"
+ },
+ {
+  "id": "m3",
+  "title": "술에서 에탄올만",
+  "place": "양조장",
+  "npc": "brewer",
+  "kind": "required",
+  "components": [
+   "water",
+   "ethanol"
+  ],
+  "investigate": {
+   "kind": "heating",
+   "targets": [
+    "water",
+    "ethanol"
+   ]
+  },
+  "steps": [
+   {
+    "method": "boiling",
+    "obtains": [
+     "ethanol",
+     "water"
+    ]
+   }
+  ],
+  "intro": [
+   "소줏고리처럼 술에서 에탄올만 뽑아내 보겠나? 물과 에탄올은 잘 섞여서 층도 안 생기지."
+  ],
+  "outro": [
+   "에탄올 냄새가 진하군. 솜씨가 좋아!"
+  ],
+  "pos": {
+   "x": 1050,
+   "y": 638
+  },
+  "choosePrompt": "물과 에탄올을 분리하기 위해 어떤 문으로 들어가시겠습니까?"
+ },
+ {
+  "id": "m4",
+  "title": "네 가지가 섞였어요",
+  "place": "실험실",
+  "npc": "researcher",
+  "kind": "final",
+  "components": [
+   "water",
+   "olive-oil",
+   "ethanol",
+   "nacl"
+  ],
+  "investigate": {
+   "kind": "density-liquid",
+   "targets": [
+    "water",
+    "olive-oil"
+   ]
+  },
+  "steps": [
+   {
+    "method": "density",
+    "obtains": [
+     "olive-oil"
+    ],
+    "leaves": [
+     "water",
+     "ethanol",
+     "nacl"
+    ]
+   },
+   {
+    "method": "boiling",
+    "obtains": [
+     "ethanol",
+     "water"
+    ],
+    "leaves": [
+     "nacl"
+    ]
+   }
+  ],
+  "intro": [
+   "물, 올리브유, 소독용 에탄올, 정제 소금이 한 병에 섞였어. 순서를 잘 생각해서 모두 분리해 봐!"
+  ],
+  "outro": [
+   "모든 물질을 얻었어. 이제 어엿한 공방 기술자야!"
+  ],
+  "pos": {
+   "x": 489,
+   "y": 222
+  },
+  "choosePrompt": "물, 올리브유, 에탄올, 소금을 분리하기 위해 어떤 문으로 들어가시겠습니까?"
+ },
+ {
+  "id": "m5",
+  "title": "볍씨를 골라 주세요",
+  "place": "농가",
+  "npc": "farmer",
+  "kind": "optional",
+  "components": [
+   "rice",
+   "husk",
+   "saltwater"
+  ],
+  "investigate": null,
+  "steps": [
+   {
+    "method": "density",
+    "obtains": [
+     "husk"
+    ],
+    "leaves": [
+     "rice",
+     "saltwater"
+    ]
+   }
+  ],
+  "intro": [
+   "볍씨를 심으려는데 쭉정이가 섞였어. 소금물을 쓰면 된다던데?"
+  ],
+  "outro": [
+   "튼튼한 볍씨만 남았구나. 고맙다!"
+  ],
+  "pos": {
+   "x": 633,
+   "y": 688
+  },
+  "choosePrompt": "볍씨와 쭉정이를 분리하기 위해 어떤 문으로 들어가시겠습니까?"
+ }
 ]

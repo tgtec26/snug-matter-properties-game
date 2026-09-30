@@ -39,6 +39,8 @@ export interface Mission {
   components: string[];
   investigate: { kind: InvestigateKind; targets: string[] } | null;
   steps: MissionStep[];
+  /** 갈림길 안내판 문구 (없으면 기본 문구) */
+  choosePrompt?: string;
   intro: string[]; outro: string[];
   /** 지도 좌표 (1280×800) */
   pos: { x: number; y: number };

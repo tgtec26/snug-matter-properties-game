@@ -119,7 +119,7 @@ function Choose() {
     <div ref={rootRef} className="absolute inset-0 pointer-events-auto overflow-hidden select-none" style={{ background: '#3b2a1a', touchAction: 'none' }}>
       <AssetImg src="/assets/bg/doors.webp" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-x-0 top-[56px] flex justify-center pointer-events-none">
-        <div className="rounded-2xl border-4 border-amber-900 bg-amber-100 px-10 py-2 text-[32px] font-black text-amber-950 shadow-xl">어떤 문으로 들어가시겠습니까?</div>
+        <div className="rounded-2xl border-4 border-amber-900 bg-amber-100 px-10 py-2 text-center text-[28px] font-black leading-tight text-amber-950 shadow-xl" style={{ maxWidth: 900 }}>{m.choosePrompt ?? '어떤 문으로 들어가시겠습니까?'}</div>
       </div>
       {DOOR_RECT.map((r, i) => {
         const d = DOORS[i];
