@@ -213,7 +213,7 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
       <StageBg name="labheat" dark={0.5} />
       <style>{`@keyframes rcnudge{0%,100%{translate:-10px 0}50%{translate:10px 0}}@keyframes rcpulse{0%,100%{opacity:.4}50%{opacity:1}}@keyframes rcflame{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.25)}}`}</style>
 
-      <Graph sim={sim} subs={subs} cfg={cfg} />
+      <div className="absolute inset-0 pointer-events-none transition-opacity duration-500" style={{ opacity: phase === 'pour' || phase === 'result' ? 0 : 1 }}><Graph sim={sim} subs={subs} cfg={cfg} /></div>
 
       {/* 온도 게이지 */}
       <div className="absolute" style={{ left: 60, top: 350, width: 40, height: 270 }}>
