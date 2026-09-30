@@ -43,7 +43,7 @@ export function BoardOverlay() {
       })}
       <button onClick={() => setDexOpen(true)} className="absolute left-4 bottom-4 rounded-xl bg-black/75 px-6 py-3 text-[20px] font-bold text-white hover:bg-black">도감</button>
       {dexOpen && <DexPopup onClose={() => setDexOpen(false)} />}
-      <style jsx global>{`@keyframes float { 0%,100%{transform:translate(-50%,-50%)} 50%{transform:translate(-50%,calc(-50% - 6px))} }`}</style>
+      <style jsx global>{`@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }`}</style>
     </div>
   );
 }
