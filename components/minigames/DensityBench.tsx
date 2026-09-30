@@ -177,6 +177,10 @@ export function DensityBench({ targets, config, onDone }: InvestigateProps) {
   return (
     <div ref={rootRef} className="absolute inset-0 pointer-events-auto select-none overflow-hidden"
       style={{ background: 'linear-gradient(160deg,#1e3a4f,#0f2233)', touchAction: 'none', color: '#fff' }}>
+      {/* 실험실 배경 (그림이 없으면 위 단색이 보인다) + 글자가 읽히게 어둡게 */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/assets/bg/lab.webp" alt="" draggable={false} className="absolute inset-0 w-full h-full object-cover pointer-events-none" onError={e => { e.currentTarget.style.display = 'none'; }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(rgba(10,20,30,.7),rgba(10,20,30,.38))' }} />
       <style>{`@keyframes db-pulse{0%,100%{opacity:.35}50%{opacity:1}}@keyframes db-bob{0%,100%{transform:translateX(0)}50%{transform:translateX(14px)}}`}</style>
 
       {/* 기록 카드 */}
@@ -184,7 +188,7 @@ export function DensityBench({ targets, config, onDone }: InvestigateProps) {
         {pieces.map(p => {
           const r = recs.find(x => x.id === p.id);
           return (
-            <div key={p.id} className="flex items-center gap-3 mb-2 rounded-md px-3" style={{ height: 44, background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.18)' }}>
+            <div key={p.id} className="flex items-center gap-3 mb-2 rounded-md px-3" style={{ height: 44, background: 'rgba(10,20,30,.7)', border: '1px solid rgba(255,255,255,.18)' }}>
               <span className="font-bold" style={{ width: 22 }}>{p.label}</span>
               {r ? (<>
                 <span className="rounded-full" style={{ width: 16, height: 16, background: r.color }} />
