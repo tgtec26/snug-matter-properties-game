@@ -5,11 +5,16 @@ import type { SeparateProps } from '@/game/minigameTypes';
 import { playSfx } from '@/game/audio';
 import { inSieve, judgeSieve, makeGrains, sieveCfg, type Grain, type SieveJudge } from '@/game/minigames/floatSieve';
 
-const PIVOT = { x: 330, y: 190 };
-const LIP = { x: 130, y: -50 };            // 그릇 입구(그릇 좌표)
-const TUB = { l: 340, r: 960, top: 400, bottom: 720, water: 450 };
-const TRAY = { x: 1010, y: 500, w: 230, h: 220 };
-const SIEVE0 = { x: 1100, y: 330 };
+// 무대 1280×800. 배경 bg/farmtable.webp 의 탁자 위에 그릇·유리 통·접시·체를 놓는다.
+const BOWL = { x: 100, y: 343, w: 300, h: 227 };       // 그릇 그림 (빈 그릇)
+const PIVOT = { x: 340, y: 520 };                      // 그릇을 기울일 때의 축(오른쪽 아래 모서리)
+const LIP = { x: 39, y: -113 };                        // 그릇 입구(축 기준)
+const BOWL_FLOOR = { x: -93, y: -59 };                 // 그릇 바닥 가운데(축 기준)
+const TUB = { l: 430, r: 870, top: 450, bottom: 660, water: 520 };
+const TRAY = { x: 950, y: 530 };                       // 접시 위 놓는 판정
+const PLATE = { x: 920, y: 497, w: 320, h: 205 };
+const SIEVE0 = { x: 1130, y: 450 };
+const SIEVE_IMG = { fx: 0.30, fy: 0.64, ar: 498 / 520 }; // 체 그림에서 망 중심 위치
 const LOCK_MS = 700;
 
 type St = 'bowl' | 'fall' | 'water' | 'carried' | 'scooped';
@@ -17,7 +22,7 @@ interface G extends Grain { x: number; y: number; vx: number; vy: number; st: St
 
 const build = (grains: Grain[]): G[] =>
   grains.map((gr, i) => ({ ...gr, x: 0, y: 0, vx: 0, vy: 0, st: 'bowl', ox: 0, oy: 0, slot: -1,
-    lx: -10 + (i % 5) * 26, ly: 22 - Math.floor(i / 5) * 18 }));
+    lx: BOWL_FLOOR.x - 62 + (i % 6) * 25, ly: BOWL_FLOOR.y - 10 + Math.floor(i / 6) * 15 + ((i * 7) % 5) }));
 
 export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) {
   const cfg = sieveCfg(config);
@@ -25,12 +30,12 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
   const doneFn = useRef(onDone);
   const doneOnce = useRef(false);
   const svgRef = useRef<SVGSVGElement>(null);
-  const drag = useRef<{ kind: string; x0: number; a0: number; dx: number; dy: number } | null>(null);
+  const drag = useRef<{ kind: string; x0: number; y0: number; a0: number; dx: number; dy: number } | null>(null);
 
   const [initial] = useState<Grain[]>(() => makeGrains(mixture, obtains, cfg));
   const mk = () => ({
     grains: build(initial), queue: initial.map((_, i) => i), angle: 0, rel: 0, started: false, elapsed: 0,
-    sieve: { ...SIEVE0 }, result: null as SieveJudge | null, lockUntil: 0, scooped: 0,
+    sieve: { ...SIEVE0 }, result: null as SieveJudge | null, lockUntil: 0, scooped: 0, homing: false,
   });
   const g = useRef(mk());
   const [view, setView] = useState(() => ({ ...mk(), t: 0, carrying: 0, timeLeft: cfg.timeLimit }));
@@ -61,6 +66,7 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
       if (over) { x.st = 'scooped'; x.slot = s.scooped++; playSfx('correct'); }
       else { x.st = 'fall'; x.vx = 0; x.vy = 0; }
     });
+    if (over) s.homing = true; // 체는 제자리로 돌아간다
     if (over && s.grains.filter((x) => x.wanted).every((x) => x.st === 'scooped')) finish();
     return true;
   };
@@ -101,7 +107,7 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
       if (!s.result) {
         const dx = (keys.has('ArrowRight') ? 1 : 0) - (keys.has('ArrowLeft') ? 1 : 0);
         const dy = (keys.has('ArrowDown') ? 1 : 0) - (keys.has('ArrowUp') ? 1 : 0);
-        if (s.queue.length) s.angle = Math.min(100, Math.max(0, s.angle + dx * 70 * dt));
+        if (s.queue.length) s.angle = Math.min(75, Math.max(0, s.angle + dx * 70 * dt));
         else {
           s.angle = Math.max(0, s.angle - 80 * dt);
           s.sieve.x = Math.min(1240, Math.max(40, s.sieve.x + dx * 380 * dt));
@@ -116,9 +122,13 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
             const a = (s.angle * Math.PI) / 180;
             gr.x = PIVOT.x + LIP.x * Math.cos(a) - LIP.y * Math.sin(a);
             gr.y = PIVOT.y + LIP.x * Math.sin(a) + LIP.y * Math.cos(a);
-            gr.vx = 60 + Math.random() * 50; gr.vy = 0; gr.st = 'fall';
+            gr.vx = 90 + Math.random() * 110; gr.vy = 0; gr.st = 'fall'; gr.ox = TUB.l + 40 + Math.random() * (TUB.r - TUB.l - 80);
             s.started = true;
           }
+        }
+        if (s.homing) {
+          s.sieve.x += (SIEVE0.x - s.sieve.x) * Math.min(1, 6 * dt); s.sieve.y += (SIEVE0.y - s.sieve.y) * Math.min(1, 6 * dt);
+          if (Math.hypot(SIEVE0.x - s.sieve.x, SIEVE0.y - s.sieve.y) < 3) s.homing = false;
         }
         if (s.started) s.elapsed += dt;
         const sv = s.sieve;
@@ -128,7 +138,7 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
             if (x.y > TUB.top) x.x = Math.min(TUB.r - 16, Math.max(TUB.l + 16, x.x));
             if (x.y >= TUB.water) { x.st = 'water'; x.vy = 0; }
           } else if (x.st === 'water') {
-            x.x = Math.min(TUB.r - 16, Math.max(TUB.l + 16, x.x + x.vx * dt + (x.floats ? Math.sin(t / 500 + x.id) * 10 * dt : 0)));
+            x.x = Math.min(TUB.r - 16, Math.max(TUB.l + 16, x.x + x.vx * dt + (x.ox - x.x) * 1.2 * dt + (x.floats ? Math.sin(t / 500 + x.id) * 10 * dt : 0)));
             x.vx *= 0.96;
             const ty = x.floats ? TUB.water + 12 + (x.id % 3) * 9 : TUB.bottom - 14 - (x.id % 4) * 9;
             const step = (x.floats ? 90 : 150) * dt;
@@ -165,16 +175,17 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
     return { x: (e.clientX - r.left) * k, y: (e.clientY - r.top) * k };
   };
   const onDown = (e: React.PointerEvent<SVGSVGElement>) => {
-    const kind = (e.target as SVGElement).dataset?.hit;
+    const kind = (e.target as SVGElement).dataset?.hit ?? (g.current.queue.length ? 'bowl' : undefined);
     if (!kind || locked() || g.current.result) return;
     e.currentTarget.setPointerCapture(e.pointerId);
     const q = toLocal(e); const s = g.current;
-    drag.current = { kind, x0: q.x, a0: s.angle, dx: s.sieve.x - q.x, dy: s.sieve.y - q.y };
+    s.homing = false;
+    drag.current = { kind, x0: q.x, y0: q.y, a0: s.angle, dx: s.sieve.x - q.x, dy: s.sieve.y - q.y };
   };
   const onMove = (e: React.PointerEvent<SVGSVGElement>) => {
     const d = drag.current; if (!d) return;
     const q = toLocal(e); const s = g.current;
-    if (d.kind === 'bowl' && s.queue.length) s.angle = Math.min(100, Math.max(0, d.a0 + (q.x - d.x0) * 0.4));
+    if (d.kind === 'bowl' && s.queue.length) s.angle = Math.min(75, Math.max(0, d.a0 + (Math.abs(q.x - d.x0) + Math.max(0, q.y - d.y0) * 0.3) * 0.4));
     else if (d.kind === 'sieve') {
       s.sieve.x = Math.min(1240, Math.max(40, q.x + d.dx));
       s.sieve.y = Math.min(760, Math.max(40, q.y + d.dy));
@@ -185,11 +196,12 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
   const s = view;
   const inTray = s.sieve.x > TRAY.x - 30 && s.sieve.y > TRAY.y - 30;
   const bounce = { animation: 'sbounce 0.9s ease-in-out infinite' } as const;
-  const hint = !s.started ? '그릇을 기울여 통에 부어요' : s.carrying ? '쟁반 위에서 놓아요' : '떠오른 것을 체로 걷어요';
+  const hint = !s.started ? '그릇을 끌어 기울여 통에 부어요' : s.carrying ? '접시 위에서 놓아요' : '떠오른 것을 체로 걷어요';
   const sec = Math.ceil(s.timeLeft);
+  const sieveW = (cfg.sieveRadius + 12) / 0.3;
 
   const grainEl = (x: G) => (
-    <ellipse key={x.id} cx={x.x} cy={x.y} rx={11} ry={6.5} transform={`rotate(${(x.id * 37) % 180} ${x.x} ${x.y})`}
+    <ellipse key={x.id} cx={x.x} cy={x.y} rx={15} ry={9} transform={`rotate(${(x.id * 37) % 180} ${x.x} ${x.y})`}
       fill={colorOf(x.substanceId)} fillOpacity={x.floats ? 0.75 : 1} stroke={x.floats ? '#a08a55' : '#7a5a1f'} strokeWidth={2}
       strokeDasharray={x.floats ? '3 2' : undefined} />
   );
@@ -199,49 +211,69 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
 
   return (
     <div className="absolute inset-0 pointer-events-auto select-none overflow-hidden" style={{ background: 'linear-gradient(180deg,#f2eddc,#d9cfae)', wordBreak: 'keep-all' }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/assets/bg/farmtable.webp" alt="" draggable={false} className="absolute inset-0 w-full h-full object-cover pointer-events-none" onError={e => { e.currentTarget.style.display = 'none'; }} />
       <style>{`@keyframes sbounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}@keyframes spulse{0%,100%{opacity:1}50%{opacity:.35}}`}</style>
       <svg ref={svgRef} viewBox="0 0 1280 800" className="absolute inset-0 w-full h-full" style={{ touchAction: 'none' }}
         onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onLostPointerCapture={onUp}>
-        {/* 소금물 통 */}
-        <rect x={TUB.l} y={TUB.water} width={TUB.r - TUB.l} height={TUB.bottom - TUB.water} fill={liquid?.color ?? '#7fbfd8'} opacity={0.6} />
-        <path d={`M${TUB.l} ${TUB.top} V${TUB.bottom} H${TUB.r} V${TUB.top}`} fill="none" stroke="#5b6b78" strokeWidth={6} strokeLinejoin="round" />
-        <text x={(TUB.l + TUB.r) / 2} y={TUB.bottom + 44} textAnchor="middle" fontSize={26} fontWeight={700} fill="#33414d">{liquid?.name ?? '소금물'}</text>
+        <defs>
+          <linearGradient id="fs-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={liquid?.color ?? '#7fbfd8'} stopOpacity=".78" /><stop offset="1" stopColor="#4d8fb0" stopOpacity=".9" /></linearGradient>
+          <linearGradient id="fs-glass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#fff" stopOpacity=".35" /><stop offset=".12" stopColor="#fff" stopOpacity=".06" /><stop offset=".85" stopColor="#fff" stopOpacity=".04" /><stop offset="1" stopColor="#fff" stopOpacity=".3" /></linearGradient>
+          <radialGradient id="fs-shadow"><stop offset="0" stopColor="#000" stopOpacity=".38" /><stop offset="1" stopColor="#000" stopOpacity="0" /></radialGradient>
+        </defs>
 
-        {/* 쟁반 */}
-        <rect x={TRAY.x} y={TRAY.y} width={TRAY.w} height={TRAY.h} rx={14} fill="rgba(255,255,255,0.45)" stroke={s.carrying ? '#e07a1f' : '#8a7a55'} strokeWidth={5} strokeDasharray="12 8"
-          style={s.carrying ? { animation: 'spulse 0.8s ease-in-out infinite' } : undefined} />
-        <text x={TRAY.x + TRAY.w / 2} y={TRAY.y + TRAY.h + 34} textAnchor="middle" fontSize={24} fontWeight={700} fill="#33414d">걷어 낸 것</text>
+        {/* 그림자 */}
+        <ellipse cx={(TUB.l + TUB.r) / 2 + 20} cy={TUB.bottom + 22} rx={250} ry={30} fill="url(#fs-shadow)" />
+        <ellipse cx={PIVOT.x - 60} cy={PIVOT.y + 6} rx={150} ry={20} fill="url(#fs-shadow)" />
+
+        {/* 유리 통 (뒤쪽 테두리 → 소금물 → 낟알 → 앞쪽 유리) */}
+        <ellipse cx={(TUB.l + TUB.r) / 2} cy={TUB.top} rx={(TUB.r - TUB.l) / 2} ry={34} fill="#dff1f7" fillOpacity={0.35} stroke="#cfe6ee" strokeWidth={5} />
+        <path d={`M${TUB.l} ${TUB.water} V${TUB.bottom} A${(TUB.r - TUB.l) / 2} 34 0 0 0 ${TUB.r} ${TUB.bottom} V${TUB.water} Z`} fill="url(#fs-water)" />
+        <ellipse cx={(TUB.l + TUB.r) / 2} cy={TUB.water} rx={(TUB.r - TUB.l) / 2} ry={30} fill={liquid?.color ?? '#7fbfd8'} fillOpacity={0.55} stroke="#eaf7fb" strokeOpacity={0.8} strokeWidth={2} />
+        <ellipse cx={(TUB.l + TUB.r) / 2 - 60} cy={TUB.water - 4} rx={110} ry={9} fill="#fff" fillOpacity={0.22} />
+
+        {worldGrains.filter((x) => x.st !== 'carried').map(grainEl)}
+
+        <path d={`M${TUB.l} ${TUB.top} V${TUB.bottom} A${(TUB.r - TUB.l) / 2} 34 0 0 0 ${TUB.r} ${TUB.bottom} V${TUB.top} A${(TUB.r - TUB.l) / 2} 34 0 0 1 ${TUB.l} ${TUB.top} Z`} fill="url(#fs-glass)" stroke="#d6ecf3" strokeWidth={5} strokeLinejoin="round" />
+        <path d={`M${TUB.l + 22} ${TUB.top + 40} V${TUB.bottom - 20}`} stroke="#fff" strokeOpacity={0.6} strokeWidth={7} strokeLinecap="round" />
+        <g>
+          <rect x={(TUB.l + TUB.r) / 2 - 62} y={TUB.bottom + 26} width={124} height={34} rx={10} fill="#fff8e6" stroke="#8a6a3a" strokeWidth={3} />
+          <text x={(TUB.l + TUB.r) / 2} y={TUB.bottom + 51} textAnchor="middle" fontSize={24} fontWeight={800} fill="#4a3417">{liquid?.name ?? '소금물'}</text>
+        </g>
+
+        {/* 접시 */}
+        <ellipse cx={PLATE.x + PLATE.w / 2 + 10} cy={PLATE.y + PLATE.h - 20} rx={PLATE.w / 2} ry={26} fill="url(#fs-shadow)" />
+        <image href="/assets/items/plate.webp" x={PLATE.x} y={PLATE.y} width={PLATE.w} height={PLATE.h} style={s.carrying ? { filter: 'drop-shadow(0 0 14px #ffb347)', animation: 'spulse 0.8s ease-in-out infinite' } : undefined} />
         {scooped.map((x) => {
           const c = x.slot % 6, r = Math.floor(x.slot / 6);
-          return grainEl({ ...x, x: TRAY.x + 30 + c * 34, y: TRAY.y + 40 + r * 26 });
+          return grainEl({ ...x, x: PLATE.x + 90 + c * 26 + (r % 2) * 12, y: PLATE.y + 88 + r * 20 });
         })}
 
-        {/* 그릇 */}
-        <g transform={`rotate(${s.angle} ${PIVOT.x} ${PIVOT.y}) translate(${PIVOT.x} ${PIVOT.y})`}>
-          <path d="M-60 -50 Q-60 50 40 50 Q140 50 140 -50" fill="#d8c9a3" stroke="#8a7a55" strokeWidth={6} strokeLinejoin="round" />
-          {bowlGrains.map((x) => grainEl({ ...x, x: x.lx, y: x.ly }))}
-          <path d="M-60 -50 Q-60 50 40 50 Q140 50 140 -50" fill="none" stroke="#8a7a55" strokeWidth={6} />
-          <rect data-hit="bowl" x={-90} y={-90} width={260} height={180} fill="transparent" style={{ cursor: 'grab' }} />
+        {/* 그릇: 안이 비어 있고 낟알만 바닥에 놓여 있다. 어디를 끌어도 기울어진다 */}
+        <g transform={`rotate(${s.angle} ${PIVOT.x} ${PIVOT.y})`}>
+          <image href="/assets/items/bowl.webp" x={BOWL.x} y={BOWL.y} width={BOWL.w} height={BOWL.h} />
+          {bowlGrains.map((x) => grainEl({ ...x, x: PIVOT.x + x.lx, y: PIVOT.y + x.ly }))}
         </g>
-        {!s.started && s.angle < 20 && <path d="M470 150 q80 -10 100 70 l-16 -12 m16 12 l14 -18" fill="none" stroke="#e07a1f" strokeWidth={8} strokeLinecap="round" style={bounce} />}
+        {!s.started && s.angle < 20 && (
+          <g style={bounce} pointerEvents="none">
+            <path d="M420 350 q70 -50 130 20" fill="none" stroke="#e07a1f" strokeWidth={9} strokeLinecap="round" />
+            <path d="M540 362 l14 24 l-26 -4" fill="none" stroke="#e07a1f" strokeWidth={9} strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+        )}
 
-        {worldGrains.map(grainEl)}
-
-        {/* 체 */}
-        <g transform={`translate(${s.sieve.x} ${s.sieve.y})`}>
-          <line x1={30} y1={-30} x2={110} y2={-90} stroke="#7a4a1f" strokeWidth={10} strokeLinecap="round" />
-          <circle r={cfg.sieveRadius} fill="rgba(255,255,255,0.25)" stroke="#7a4a1f" strokeWidth={7} />
-          <path d={`M${-cfg.sieveRadius} 0 H${cfg.sieveRadius} M0 ${-cfg.sieveRadius} V${cfg.sieveRadius}`} stroke="#7a4a1f" strokeWidth={2} opacity={0.5} />
-          <circle data-hit="sieve" r={cfg.sieveRadius + 26} fill="transparent" style={{ cursor: 'grab' }} />
-        </g>
+        {/* 체: 촘촘한 망. 그림 속 망 중심이 잡는 원의 중심 */}
+        <ellipse cx={s.sieve.x + 8} cy={s.sieve.y + 92} rx={cfg.sieveRadius + 18} ry={13} fill="url(#fs-shadow)" />
+        <image href="/assets/items/sieve.webp" x={s.sieve.x - SIEVE_IMG.fx * sieveW} y={s.sieve.y - SIEVE_IMG.fy * sieveW * SIEVE_IMG.ar} width={sieveW} height={sieveW * SIEVE_IMG.ar} pointerEvents="none" />
+        {worldGrains.filter((x) => x.st === 'carried').map(grainEl)}
+        <circle data-hit="sieve" cx={s.sieve.x} cy={s.sieve.y} r={cfg.sieveRadius + 26} fill="transparent" style={{ cursor: 'grab' }} />
         {s.started && !s.carrying && !inTray && s.elapsed < 8 && (
-          <path d="M1000 380 h-70 l14 -14 m-14 14 l14 14" fill="none" stroke="#e07a1f" strokeWidth={8} strokeLinecap="round" style={bounce} />
+          <path d="M1010 470 h-70 l14 -14 m-14 14 l14 14" fill="none" stroke="#e07a1f" strokeWidth={8} strokeLinecap="round" style={bounce} pointerEvents="none" />
         )}
       </svg>
 
-      <div className="absolute left-6 top-4 text-[26px] font-bold text-[#22303c]">소금물에 띄우기 · {wantedName} 걷기</div>
+      <div className="absolute left-6 top-4 rounded-xl bg-amber-50/95 px-4 py-1 text-[26px] font-bold text-[#22303c] shadow">소금물에 띄우기 · {wantedName} 걷기</div>
       {s.started && (
-        <div className="absolute right-24 top-5 flex items-center gap-3 text-[24px] font-bold text-[#22303c]">
+        <div className="absolute right-[280px] top-5 flex items-center gap-3 text-[24px] font-bold text-[#22303c]">
           <div className="h-3 w-48 overflow-hidden rounded-full bg-black/15"><div className="h-full bg-[#3d5a80]" style={{ width: `${(s.timeLeft / cfg.timeLimit) * 100}%` }} /></div>
           {sec}
         </div>
@@ -250,7 +282,7 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
         <button type="button" className="absolute bottom-4 left-6 rounded-xl bg-[#3d5a80] px-6 py-2 text-[22px] font-bold text-white"
           onClick={(e) => { if (!locked()) finish(); e.currentTarget.blur(); }}>다 걷었어요</button>
       )}
-      <div className="absolute left-6 top-[62px] max-w-[560px] text-[22px] font-bold text-[#22303c] pointer-events-none">{hint}</div>
+      <div className="absolute left-6 top-[66px] max-w-[560px] rounded-xl bg-amber-50/95 px-4 py-1 text-[22px] font-bold text-[#8a4a10] shadow pointer-events-none">{hint}</div>
 
       {s.result && (
         <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(20,30,40,0.45)' }}>
