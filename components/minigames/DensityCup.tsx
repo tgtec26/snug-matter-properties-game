@@ -7,7 +7,7 @@ import { playSfx } from '@/game/audio';
 import { calcStars, flowRate, labelCorrect, layerOrder, mixDelta, settle } from '@/game/minigames/densityCup';
 
 const CUP = { x: 540, y: 320, w: 200, h: 340 };
-const PIVOT = [{ x: 470, y: 300 }, { x: 810, y: 300 }];
+const PIVOT = [{ x: 470, y: 255 }, { x: 810, y: 255 }];
 const wallX = [CUP.x + 10, CUP.x + CUP.w - 10];
 const TAG_HOME = [{ x: 1000, y: 380 }, { x: 1000, y: 480 }];
 const now = () => performance.now();
@@ -220,7 +220,7 @@ export function DensityCup({ targets, config, onDone }: InvestigateProps) {
         );
       })}
       {phase === 'pour' && !touched && (
-        <svg className="absolute" style={{ left: PIVOT[0].x - 160, top: 330, animation: 'dc-bob 1s infinite' }} width="50" height="70"><path d="M25 4V56M10 42L25 58L40 42" stroke="#ffe082" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        <svg className="absolute" style={{ left: PIVOT[0].x - 160, top: 285, animation: 'dc-bob 1s infinite' }} width="50" height="70"><path d="M25 4V56M10 42L25 58L40 42" stroke="#ffe082" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
       )}
 
       {/* 이름표 */}
