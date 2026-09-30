@@ -2,8 +2,11 @@
 
 > AI 코딩 에이전트가 이 저장소에서 작업할 때 따라야 할 지침. 상위 `../../AGENTS.md`(워크스페이스 공통 규칙)가 있으면 병합해 적용한다.
 
+## 전역 개발 지침
+이 시리즈의 모든 게임은 `tgtec26/snug-game-principles`의 `CLAUDE.md`(수업용 과학 게임 대원칙)를 따른다. 클라우드 세션에서는 `add_repo`로 그 저장소를 붙여 읽는다. 완료 전에는 그 10번 점검표로 스스로 검사한다. 이 저장소의 대조 결과와 남은 일은 [docs/principles-check.md](docs/principles-check.md), 레퍼런스 게임 조사는 [docs/reference-games.md](docs/reference-games.md).
+
 ## 현재 상태 (2026-09-30)
-뼈대 + 승인된 설계 스펙. **계획서는 아직 없다.** `docs/superpowers/plans/<날짜>-matter-properties-mvp.md`를 스펙 9장 기준으로 만든 뒤 태스크별로 구현한다 (superpowers:writing-plans → subagent-driven-development).
+MVP 구현 진행 중 (자세한 기록은 PROGRESS.md). 미니게임 8개(React 오버레이), 의뢰판·퀴즈·요약, `/admin`(폼 편집기 + 의뢰판 드래그 배치), Codex 그림 적용까지 들어가 있다. 계획서(`docs/superpowers/plans/`)는 만들지 않고 스펙에서 바로 구현했다. 그림 목록은 `docs/art-todo.md`, 남은 일은 PROGRESS.md 끝 절.
 
 ## 작업을 이어받으면
 1. [PROGRESS.md](PROGRESS.md)에서 완료 항목·다음 단계 확인.

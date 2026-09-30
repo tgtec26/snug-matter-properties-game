@@ -34,3 +34,9 @@
 - 시트 후처리 스크립트: `scripts/cutout_sheet.py`(불투명 소품), `scripts/cutout_glass.py`(유리, 안쪽 투명화 + glassShapes.json 생성). 원본 `docs/assets-source/*-sheet.png`.
 - 증류: 얼음물(시험관을 담가 기체를 식힘)·얼음 넣기(미지근해지면 깜빡임) 라벨 추가.
 - 주의: SVG `<mask>` 안 그림은 정적 요소에서 다시 그려지지 않는 문제가 있어 clipPath 방식으로 바꿈.
+
+## 2026-09-30 전역 개발 지침 대조
+- `tgtec26/snug-game-principles`(커밋 0f09d04) 기준 사후 점검: `docs/principles-check.md`(점검표 14개 항목 + 교과서 원문 위치), 회고 조사 `docs/reference-games.md`. AGENTS.md에 지침 링크 추가, 낡은 "현재 상태" 문단 갱신.
+- 위 "MVP 1차"의 "미구현: `/admin` 편집기"는 낡은 기록이다. `/admin`은 커밋 2b1d4bf(폼 편집기 + 의뢰판 드래그 배치)에서 들어갔다. 사례 카드 9장·자료실·효과음 추가는 여전히 미구현.
+- 코드는 바꾸지 않았다. `pnpm test`(58)·typecheck·lint 통과. 브라우저 플레이는 하지 않았다.
+- 지침 기준 남은 일: 효과음 제작(놓기·빼기·피날레), 성공 피드백·피날레 보강, 음량 어드민화, 퀴즈 비중 축소 검토, 1280×800 완주 QA, 크롬북 실기, 교과서 원문 `docs/textbook/` 위치 결정(사용자).
