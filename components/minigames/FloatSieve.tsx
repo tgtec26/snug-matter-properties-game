@@ -40,7 +40,6 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
   const g = useRef(mk());
   const [view, setView] = useState(() => ({ ...mk(), t: 0, carrying: 0, timeLeft: cfg.timeLimit }));
 
-  const colorOf = (id: string) => mixture.find((m) => m.id === id)?.color ?? '#d9b45a';
   const wantedName = obtains[0]?.name ?? '쭉정이';
   const otherName = mixture.find((m) => m.state === 'solid' && !obtains.some((o) => o.id === m.id))?.name ?? '볍씨';
   const liquid = mixture.find((m) => m.state === 'liquid');
@@ -200,11 +199,13 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
   const sec = Math.ceil(s.timeLeft);
   const sieveW = (cfg.sieveRadius + 12) / 0.3;
 
-  const grainEl = (x: G) => (
-    <ellipse key={x.id} cx={x.x} cy={x.y} rx={15} ry={9} transform={`rotate(${(x.id * 37) % 180} ${x.x} ${x.y})`}
-      fill={colorOf(x.substanceId)} fillOpacity={x.floats ? 0.75 : 1} stroke={x.floats ? '#a08a55' : '#7a5a1f'} strokeWidth={2}
-      strokeDasharray={x.floats ? '3 2' : undefined} />
-  );
+  const grainEl = (x: G) => {
+    const w = 54, h = x.floats ? 17.5 : 22;
+    return (
+      <image key={x.id} href={`/assets/items/${x.floats ? 'husk' : 'rice'}${(x.id % 4) + 1}.webp`} x={x.x - w / 2} y={x.y - h / 2} width={w} height={h}
+        transform={`rotate(${(x.id * 47) % 360} ${x.x} ${x.y})`} pointerEvents="none" />
+    );
+  };
   const bowlGrains = s.grains.filter((x) => x.st === 'bowl');
   const worldGrains = s.grains.filter((x) => x.st === 'fall' || x.st === 'water' || x.st === 'carried');
   const scooped = s.grains.filter((x) => x.st === 'scooped');
