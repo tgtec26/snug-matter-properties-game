@@ -237,8 +237,8 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
         <path d={`M${TUB.l} ${TUB.top} V${TUB.bottom} A${(TUB.r - TUB.l) / 2} 34 0 0 0 ${TUB.r} ${TUB.bottom} V${TUB.top} A${(TUB.r - TUB.l) / 2} 34 0 0 1 ${TUB.l} ${TUB.top} Z`} fill="url(#fs-glass)" stroke="#d6ecf3" strokeWidth={5} strokeLinejoin="round" />
         <path d={`M${TUB.l + 22} ${TUB.top + 40} V${TUB.bottom - 20}`} stroke="#fff" strokeOpacity={0.6} strokeWidth={7} strokeLinecap="round" />
         <g>
-          <rect x={(TUB.l + TUB.r) / 2 - 62} y={TUB.bottom + 26} width={124} height={34} rx={10} fill="#fff8e6" stroke="#8a6a3a" strokeWidth={3} />
-          <text x={(TUB.l + TUB.r) / 2} y={TUB.bottom + 51} textAnchor="middle" fontSize={24} fontWeight={800} fill="#4a3417">{liquid?.name ?? '소금물'}</text>
+          <rect x={(TUB.l + TUB.r) / 2 - 62} y={(TUB.water + TUB.bottom) / 2 - 17} width={124} height={34} rx={10} fill="#fff8e6" stroke="#8a6a3a" strokeWidth={3} />
+          <text x={(TUB.l + TUB.r) / 2} y={(TUB.water + TUB.bottom) / 2 + 8} textAnchor="middle" fontSize={24} fontWeight={800} fill="#4a3417">{liquid?.name ?? '소금물'}</text>
         </g>
 
         {/* 접시 */}
