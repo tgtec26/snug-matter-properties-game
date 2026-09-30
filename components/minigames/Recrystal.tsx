@@ -34,11 +34,14 @@ function Arrow({ x, y, rot = 0 }: { x: number; y: number; rot?: number }) {
   );
 }
 
-function Beaker({ sim, subs, x, y, tilt, rod }: { sim: Sim; subs: Substance[]; x: number; y: number; tilt: number; rod: number }) {
+function Beaker({ sim, subs, x, y, tilt, rod, drain }: { sim: Sim; subs: Substance[]; x: number; y: number; tilt: number; rod: number; drain: boolean }) {
   return (
-    <svg width={BW} height={BH} viewBox={`0 0 ${BW} ${BH}`} style={{ position: 'absolute', left: x, top: y, transform: `rotate(${tilt}deg)`, transformOrigin: '50% 90%', pointerEvents: 'none', transition: 'transform .5s' }}>
+    <svg width={BW} height={BH} viewBox={`0 0 ${BW} ${BH}`} style={{ position: 'absolute', left: x, top: y, transform: `rotate(${tilt}deg)`, transformOrigin: '96% 6%', pointerEvents: 'none', transition: 'transform .5s' }}>
+      <g transform={`translate(${BW} 0) scale(-1 1)`}>
       <GlassG name="beaker-l" x={4} y={14} w={212} h={252}>
-        <rect x="0" y="110" width="220" height="156" fill="#5aa9e6" fillOpacity=".55" />
+        {/* 물은 비커가 기울어도 수평을 유지하고(반대로 돌림), 따르는 동안 줄어든다 */}
+        <g style={{ transform: `rotate(${tilt}deg)`, transformOrigin: '110px 190px', transition: 'transform .5s' }}>
+          <rect x="-200" width="620" fill="#5aa9e6" fillOpacity=".55" style={{ y: drain ? 300 : 110, height: drain ? 0 : 300, transition: 'y 1.2s ease-in, height 1.2s ease-in' }} />
         {subs.map((s, i) => (
           <g key={s.id}>
             {Array.from({ length: Math.ceil(solidLeft(sim, i) * 3) }).map((_, k) => (
@@ -49,10 +52,12 @@ function Beaker({ sim, subs, x, y, tilt, rod }: { sim: Sim; subs: Substance[]; x
             ))}
           </g>
         ))}
+        </g>
       </GlassG>
       <g style={{ transform: `rotate(${rod}deg)`, transformOrigin: '110px 30px' }}>
         <rect x="104" y="-40" width="12" height="230" rx="6" fill="#dbeafe" fillOpacity=".9" stroke="#93c5fd" strokeWidth="2" />
       </g>
+    </g>
     </svg>
   );
 }
@@ -204,14 +209,14 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
   };
 
   const bpos = drag ? { x: drag.x + drag.dx, y: drag.y + drag.dy }
-    : phase === 'heat' ? B0 : phase === 'cooling' || phase === 'cooled' ? IN_ICE : { x: FUN.x + 20, y: FUN.y - 190 };
-  const tilt = phase === 'pour' || phase === 'result' ? 70 : 0;
+    : phase === 'heat' ? B0 : phase === 'cooling' || phase === 'cooled' ? IN_ICE : { x: FUN.x - 81, y: FUN.y - 40 };
+  const tilt = phase === 'pour' || phase === 'result' ? 72 : 0;
 
   return (
     <div data-stage className="absolute inset-0 pointer-events-auto select-none overflow-hidden text-white"
       style={{ background: 'linear-gradient(160deg,#1c2b45,#101a2e)', touchAction: 'none' }}>
       <StageBg name="labheat" dark={0.5} />
-      <style>{`@keyframes rcnudge{0%,100%{translate:-10px 0}50%{translate:10px 0}}@keyframes rcpulse{0%,100%{opacity:.4}50%{opacity:1}}@keyframes rcflame{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.25)}}`}</style>
+      <style>{`@keyframes rcnudge{0%,100%{translate:-10px 0}50%{translate:10px 0}}@keyframes rcstream{to{stroke-dashoffset:-16}}@keyframes rcpulse{0%,100%{opacity:.4}50%{opacity:1}}@keyframes rcflame{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.25)}}`}</style>
 
       <div className="absolute inset-0 pointer-events-none transition-opacity duration-500" style={{ opacity: phase === 'pour' || phase === 'result' ? 0 : 1 }}><Graph sim={sim} subs={subs} cfg={cfg} /></div>
 
@@ -277,7 +282,12 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
       {phase === 'cooled' && drag && <div style={{ position: 'absolute', left: FUN.x - 10, top: FUN.y - 10, width: FUN.w + 20, height: FUN.h + 20, border: '4px dashed #fde047', borderRadius: 24, animation: 'rcpulse .8s infinite' }} />}
 
       {/* 비커 */}
-      <Beaker sim={sim} subs={subs} x={bpos.x} y={bpos.y} tilt={tilt} rod={phase === 'heat' ? rod : 0} />
+      <Beaker sim={sim} subs={subs} x={bpos.x} y={bpos.y} tilt={tilt} rod={phase === 'heat' ? rod : 0} drain={phase === 'pour' || phase === 'result'} />
+      {phase === 'pour' && (
+        <svg width="1280" height="800" className="absolute inset-0 pointer-events-none" style={{ zIndex: 12 }}>
+          <path d={`M${FUN.x + 130} ${FUN.y - 22} Q${FUN.x + 133} ${FUN.y + 10} ${FUN.x + 122} ${FUN.y + 62}`} fill="none" stroke="#7fbfe8" strokeWidth="11" strokeLinecap="round" opacity=".9" strokeDasharray="10 6" style={{ animation: 'rcstream .35s linear infinite' }} />
+        </svg>
+      )}
       {draggable && (
         <div style={{ position: 'absolute', left: bpos.x, top: bpos.y, width: BW, height: BH, touchAction: 'none', cursor: 'grab', zIndex: 10 }}
           onPointerDown={onBeakerDown} onPointerMove={onBeakerMove} onPointerUp={onBeakerUp(true)} onPointerCancel={onBeakerUp(false)} onLostPointerCapture={() => setDrag(null)} />
