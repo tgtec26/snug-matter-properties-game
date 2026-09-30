@@ -21,3 +21,9 @@
 - 미니게임 `components/minigames/*` (조사 4: DensityBench·DensityCup·SolubilityBottle·HeatingCurve / 분리 4: Funnel·Recrystal·Distill·FloatSieve), 순수 판정은 `game/minigames/*.ts`+테스트. 개발용 단독 페이지 `app/dev/<Name>`.
 - 그림: Codex로 배경 2·NPC 시트·아이템 시트 생성 → `docs/assets-source/`, 게임용 `public/assets/{bg,npc,items}`. 목록은 `docs/art-todo.md`.
 - 미구현: `/admin` 편집기, 사례 카드 9장·자료실, 효과음 추가, 선택 의뢰 외 추가 의뢰.
+
+### QA 메모 (2026-09-30, 브라우저 1024×768 창에서 letterbox로 확인)
+- 실제 조작으로 확인: 타이틀→인트로→튜토리얼(밀도 측정대)→퀴즈→의뢰판, 밀도 컵(기울여 붓기·이름표 드래그), 분별 깔때기, 용해도 병, 재결정(가열·냉각·거름·씻기), 가열 곡선, 증류(시험관 교체), 갈림길 오답 안내, 요약 화면. 새로고침 복원(진행 중 미니게임은 갈림길로 복귀).
+- 확인 못 한 것: 소금물에 띄우기(FloatSieve) 완주, 크롬북 터치, 플레이 시간 실측(예상 12~14분), 최종 의뢰 처음부터 끝까지 한 번에.
+- 조정: 용해도 병 약숟가락 0.5 g→1 g (질산 칼륨 60 ℃까지 22번 → 11번), 눈높이 허용 폭 0.15→0.3, 실행 중 HUD 숨김(조사·분리 화면).
+- 알려진 아쉬움: 장치 그림은 SVG 도형(Codex 그림 아님), NPC는 정사각 초상만, 효과음 3종뿐, 미니게임 화면 어두운 단색 배경. 피드백 후 그림 교체 예정.

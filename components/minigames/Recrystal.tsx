@@ -82,7 +82,7 @@ function Graph({ sim, subs, cfg }: { sim: Sim; subs: Substance[]; cfg: ReturnTyp
   );
 }
 
-export function Recrystal({ mixture, obtains, config, onDone }: SeparateProps) {
+export function Recrystal({ mixture, obtains, leaves, config, onDone }: SeparateProps) {
   const cfg = defaultCfg(config);
   const subs = mixture;
   const ti = Math.max(0, subs.findIndex(s => s.id === obtains[0]?.id));
@@ -285,7 +285,7 @@ export function Recrystal({ mixture, obtains, config, onDone }: SeparateProps) {
           <rect x="30" y="230" width="180" height="150" rx="14" fill="#cfe9f7" fillOpacity=".2" stroke="#e6f4fb" strokeWidth="5" />
           {(phase === 'pour' || phase === 'result') && <rect x="34" y={phase === 'result' ? 290 : 350} width="172" height={phase === 'result' ? 86 : 26} rx="8" fill="#5aa9e6" fillOpacity=".55" style={{ transition: 'all 1.2s' }} />}
         </svg>
-        {phase === 'result' && <div className="absolute w-full text-center text-lg font-bold" style={{ top: FUN.h + 215 }}>{obtains[0]?.name}</div>}
+        {phase === 'result' && <div className="absolute w-full text-center text-lg font-bold" style={{ top: FUN.h + 215 }}>{leaves[0]?.name} 용액</div>}
       </div>
       {phase === 'cooled' && !drag && <Arrow x={760} y={520} rot={-15} />}
       {phase === 'cooled' && drag && <div style={{ position: 'absolute', left: FUN.x - 10, top: FUN.y - 10, width: FUN.w + 20, height: FUN.h + 20, border: '4px dashed #fde047', borderRadius: 24, animation: 'rcpulse .8s infinite' }} />}
@@ -313,7 +313,7 @@ export function Recrystal({ mixture, obtains, config, onDone }: SeparateProps) {
         </div>
       )}
       {showNext && (
-        <div className="absolute right-8 bottom-8 flex gap-4">
+        <div className="absolute left-8 bottom-14 flex gap-4">
           <button className="rounded-xl bg-slate-600 px-6 py-4 text-2xl font-bold" onClick={e => { e.currentTarget.blur(); retry(); }}>다시 하기</button>
           <button className="rounded-xl bg-emerald-500 px-8 py-4 text-2xl font-bold" onClick={e => { e.currentTarget.blur(); finish(); }}>다음</button>
         </div>
