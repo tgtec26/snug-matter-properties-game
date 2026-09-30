@@ -16,7 +16,6 @@ const HOME = { x: 400, y: 250, w: 180, h: 300 };
 const BEAKER = { x: 800, y: 280, w: 260, h: 290 };
 const IN_BEAKER = { x: 840, y: 250 };
 const SPOON_HOME = { x: 110, y: 300 };
-const STIR_DIST = 220;
 const COLORS = ['#f59e0b', '#38bdf8'];
 const inRect = (px: number, py: number, r: { x: number; y: number; w: number; h: number }, m = 30) =>
   px > r.x - m && px < r.x + r.w + m && py > r.y - m && py < r.y + r.h + m;
@@ -42,41 +41,22 @@ function BottleView({ b, s, stirring, x, y }: { b: Bottle; s: Substance; stirrin
   );
 }
 
+/** 자석 젓개 판: 그냥 눌러서 스위치를 켠다(끌기 아님) */
 function Pad({ x, y, onRub, hint }: { x: number; y: number; onRub: () => void; hint: boolean }) {
-  const acc = useRef(0);
-  const last = useRef<{ x: number; y: number } | null>(null);
-  const [fill, setFill] = useState(0);
-  const pt = (e: React.PointerEvent) => {
-    const r = (e.currentTarget.closest('[data-stage]') as HTMLElement).getBoundingClientRect();
-    return { x: ((e.clientX - r.left) / r.width) * 1280, y: ((e.clientY - r.top) / r.height) * 800 };
-  };
-  const end = () => { last.current = null; };
   return (
-    <div
-      style={{ position: 'absolute', left: x, top: y, width: 220, height: 130, touchAction: 'none', cursor: 'grab' }}
-      onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); last.current = pt(e); }}
-      onPointerMove={e => {
-        if (!last.current) return;
-        const p = pt(e);
-        acc.current += Math.hypot(p.x - last.current.x, p.y - last.current.y);
-        last.current = p;
-        setFill(Math.min(1, acc.current / STIR_DIST));
-        if (acc.current >= STIR_DIST) { acc.current = 0; setFill(0); onRub(); }
-      }}
-      onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end}
-    >
-      <svg width="220" height="130" viewBox="0 0 220 130" style={{ overflow: 'visible' }}>
-        <image href="/assets/items/stirrer.webp" x="5" y="-30" width="210" height="152" pointerEvents="none" />
-        <rect x="34" y="112" width="152" height="8" rx="4" fill="#222735" />
-        <rect x="34" y="112" width={152 * fill} height="8" rx="4" fill="#fde047" />
+    <button type="button" aria-label="젓개 켜기"
+      style={{ position: 'absolute', left: x, top: y - 40, width: 220, height: 170, touchAction: 'manipulation', cursor: 'pointer', background: 'transparent' }}
+      onClick={e => { e.currentTarget.blur(); onRub(); }}>
+      <svg width="220" height="170" viewBox="0 0 220 170" style={{ overflow: 'visible' }}>
+        <image href="/assets/items/stirrer.webp" x="5" y="10" width="210" height="152" pointerEvents="none" />
         {hint && (
-          <g style={{ animation: 'sbnudge 1s ease-in-out infinite' }}>
-            <path d="M70 46 Q110 8 150 46" fill="none" stroke="#fde047" strokeWidth="4" strokeLinecap="round" />
-            <path d="M144 34 L152 48 L137 47 Z" fill="#fde047" />
+          <g pointerEvents="none">
+            <circle cx="162" cy="119" r="26" fill="none" stroke="#fde047" strokeWidth="5" style={{ animation: 'sbpulse .9s infinite' }} />
+            <text x="110" y="176" textAnchor="middle" fontSize="24" fontWeight="800" fill="#fde047" stroke="#3a2412" strokeWidth="5" paintOrder="stroke">누르면 젓기</text>
           </g>
         )}
       </svg>
-    </div>
+    </button>
   );
 }
 
@@ -236,7 +216,7 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
             </div>
             <div className="mt-1 text-[21px] font-bold text-amber-100">
               {subDone ? '기록 완료! 다음으로 넘어가요'
-                : rec.r20 === undefined ? '약숟가락으로 가루를 병에 넣고, 아래 판을 문질러 저어요. 안 녹고 남을 때까지 넣어요'
+                : rec.r20 === undefined ? '약숟가락을 병 위로 끌어 가루를 넣고, 아래 젓개 판을 눌러 저어요. 안 녹고 남을 때까지 넣어요'
                 : !dipped ? '병을 끌어서 60 ℃ 물 비커에 담가요'
                 : '가루를 더 넣고 저어서, 60 ℃에서 녹는 최대량을 찾아요'}
             </div>
@@ -302,7 +282,7 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
             onPointerDown={canDip ? startDrag('bottle', HOME.x, HOME.y) : undefined} onPointerMove={moveDrag}
             onPointerUp={endDrag(true)} onPointerCancel={endDrag(false)} onLostPointerCapture={() => setDrag(null)}
           />
-          <div className="absolute text-center text-xl font-bold rounded-xl px-3 py-1" style={{ left: HOME.x - 40, top: HOME.y - 52, width: HOME.w + 80, background: 'rgba(14,28,42,.92)', border: '1px solid rgba(255,255,255,.35)' }}>
+          <div className="absolute text-center text-xl font-bold rounded-xl px-3 py-1 whitespace-nowrap" style={{ left: HOME.x - 60, top: HOME.y - 52, width: HOME.w + 120, background: 'rgba(14,28,42,.92)', border: '1px solid rgba(255,255,255,.35)' }}>
             <span className="text-slate-300">넣은 양</span> {total.toFixed(1)} g · <span className="text-slate-300">녹은 양</span> {bottle.dissolved.toFixed(1)} g
           </div>
 
