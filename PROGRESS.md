@@ -27,3 +27,10 @@
 - 확인 못 한 것: 소금물에 띄우기(FloatSieve) 완주, 크롬북 터치, 플레이 시간 실측(예상 12~14분), 최종 의뢰 처음부터 끝까지 한 번에.
 - 조정: 용해도 병 약숟가락 0.5 g→1 g (질산 칼륨 60 ℃까지 22번 → 11번), 눈높이 허용 폭 0.15→0.3, 실행 중 HUD 숨김(조사·분리 화면).
 - 알려진 아쉬움: 장치 그림은 SVG 도형(Codex 그림 아님), NPC는 정사각 초상만, 효과음 3종뿐, 미니게임 화면 어두운 단색 배경. 피드백 후 그림 교체 예정.
+
+## 2026-09-30 그림 교체 2차
+- 얻은 물질: 트럼프 카드 비율 카드(`components/CardFace.tsx`) + 컬렉션 북(`CollectionBook.tsx`, `bg/book.webp`) 끼워 넣기 연출. 도감 버튼도 같은 북. 퀴즈 정답에 종이 조각·"정답!" 연출.
+- 모든 조사·분리 화면에 Codex 배경(`bg/lab|labheat|kitchen|farmtable`)과 소품 그림(`items/`: 유리 도구 12종, 저울·가열판·얼음통·약숟가락·젓개판, 볍씨·쭉정이). 유리 안 액체는 `game/glassShapes.json`(행별 안쪽 폭)으로 clipPath 처리하는 `GlassG`(components/ui.tsx).
+- 시트 후처리 스크립트: `scripts/cutout_sheet.py`(불투명 소품), `scripts/cutout_glass.py`(유리, 안쪽 투명화 + glassShapes.json 생성). 원본 `docs/assets-source/*-sheet.png`.
+- 증류: 얼음물(시험관을 담가 기체를 식힘)·얼음 넣기(미지근해지면 깜빡임) 라벨 추가.
+- 주의: SVG `<mask>` 안 그림은 정적 요소에서 다시 그려지지 않는 문제가 있어 clipPath 방식으로 바꿈.

@@ -1,6 +1,6 @@
 'use client';
 
-import { StageBg } from '@/components/ui';
+import { GlassG, StageBg } from '@/components/ui';
 import { useEffect, useRef, useState } from 'react';
 import type { SeparateProps } from '@/game/minigameTypes';
 import type { Substance } from '@/game/types';
@@ -37,18 +37,19 @@ function Arrow({ x, y, rot = 0 }: { x: number; y: number; rot?: number }) {
 function Beaker({ sim, subs, x, y, tilt, rod }: { sim: Sim; subs: Substance[]; x: number; y: number; tilt: number; rod: number }) {
   return (
     <svg width={BW} height={BH} viewBox={`0 0 ${BW} ${BH}`} style={{ position: 'absolute', left: x, top: y, transform: `rotate(${tilt}deg)`, transformOrigin: '50% 90%', pointerEvents: 'none', transition: 'transform .5s' }}>
-      <rect x="10" y="30" width="200" height="232" rx="12" fill="#cfe9f7" fillOpacity=".2" stroke="#e6f4fb" strokeWidth="5" />
-      <rect x="14" y="110" width="192" height="148" rx="8" fill="#5aa9e6" fillOpacity=".5" />
-      {subs.map((s, i) => (
-        <g key={s.id}>
-          {Array.from({ length: Math.ceil(solidLeft(sim, i) * 3) }).map((_, k) => (
-            <circle key={k} cx={30 + ((k * 41 + i * 17) % 150)} cy={240 - ((k * 13 + i * 7) % 22)} r="5" fill={i === 0 ? '#f4f1ea' : '#b8c4cc'} />
-          ))}
-          {Array.from({ length: Math.ceil(sim.crystal[i] * 3) }).map((_, k) => (
-            <path key={k} d={`M${28 + ((k * 37) % 150)} ${246 - ((k * 11) % 26)} l7 -12 l7 12 l-7 12 z`} fill="#eef7ff" stroke="#9cc7e8" strokeWidth="1.5" />
-          ))}
-        </g>
-      ))}
+      <GlassG name="beaker-l" x={4} y={14} w={212} h={252}>
+        <rect x="0" y="110" width="220" height="156" fill="#5aa9e6" fillOpacity=".55" />
+        {subs.map((s, i) => (
+          <g key={s.id}>
+            {Array.from({ length: Math.ceil(solidLeft(sim, i) * 3) }).map((_, k) => (
+              <circle key={k} cx={34 + ((k * 41 + i * 17) % 150)} cy={240 - ((k * 13 + i * 7) % 22)} r="5" fill={i === 0 ? '#f4f1ea' : '#b8c4cc'} />
+            ))}
+            {Array.from({ length: Math.ceil(sim.crystal[i] * 3) }).map((_, k) => (
+              <path key={k} d={`M${32 + ((k * 37) % 150)} ${246 - ((k * 11) % 26)} l7 -12 l7 12 l-7 12 z`} fill="#eef7ff" stroke="#9cc7e8" strokeWidth="1.5" />
+            ))}
+          </g>
+        ))}
+      </GlassG>
       <g style={{ transform: `rotate(${rod}deg)`, transformOrigin: '110px 30px' }}>
         <rect x="104" y="-40" width="12" height="230" rx="6" fill="#dbeafe" fillOpacity=".9" stroke="#93c5fd" strokeWidth="2" />
       </g>
@@ -61,7 +62,7 @@ function Graph({ sim, subs, cfg }: { sim: Sim; subs: Substance[]; cfg: ReturnTyp
   const X = (t: number) => L + (t / 80) * (W - L - R);
   const Y = (g: number) => H - Bt - (Math.min(g, ymax) / ymax) * (H - Bt - T);
   return (
-    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="absolute rounded-xl" style={{ left: 700, top: 80, background: '#ffffff12' }}>
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="absolute rounded-xl" style={{ left: 700, top: 80, background: 'rgba(14,28,42,.92)' }}>
       {[0, 20, 40, 60, 80].map(t => (<g key={t}><line x1={X(t)} x2={X(t)} y1={T} y2={H - Bt} stroke="#ffffff22" /><text x={X(t)} y={H - Bt + 20} textAnchor="middle" fill="#cbd5e1" fontSize="15">{t}</text></g>))}
       {[0, 50, 100, 150].map(g => (<g key={g}><line x1={L} x2={W - R} y1={Y(g)} y2={Y(g)} stroke="#ffffff22" /><text x={L - 8} y={Y(g) + 5} textAnchor="end" fill="#cbd5e1" fontSize="15">{g}</text></g>))}
       <text x={W / 2} y={H - 6} textAnchor="middle" fill="#e2e8f0" fontSize="15">온도 (℃)</text>
@@ -217,7 +218,7 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
 
       {/* 온도 게이지 */}
       <div className="absolute" style={{ left: 60, top: 350, width: 40, height: 270 }}>
-        <div style={{ position: 'absolute', inset: 0, background: '#ffffff18', border: '3px solid #ffffff66', borderRadius: 20 }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(14,28,42,.9)', border: '3px solid rgba(255,255,255,.5)', borderRadius: 20 }} />
         <div style={{ position: 'absolute', left: 6, right: 6, bottom: 6, height: `${Math.max(2, (sim.temp / cfg.maxTemp) * 100)}%`, maxHeight: 258, background: 'linear-gradient(#ef4444,#f59e0b)', borderRadius: 14 }} />
         <div className="absolute w-[100px] text-center text-2xl font-bold" style={{ left: -30, top: -42 }}>{Math.round(sim.temp)} ℃</div>
       </div>
@@ -228,15 +229,9 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
         onPointerDown={e => { if (phase === 'heat' && !locked()) { e.currentTarget.setPointerCapture(e.pointerId); setHeat(true); } }}
         onPointerUp={() => setHeat(false)} onPointerCancel={() => setHeat(false)} onLostPointerCapture={() => setHeat(false)}
       >
-        <svg width="300" height="130" viewBox="0 0 300 130">
-          <rect x="40" y="10" width="220" height="14" rx="4" fill="#94a3b8" />
-          <rect x="60" y="24" width="8" height="70" fill="#94a3b8" /><rect x="232" y="24" width="8" height="70" fill="#94a3b8" />
-          <rect x="90" y="70" width="120" height="50" rx="12" fill="#475569" stroke="#cbd5e1" strokeWidth="3" />
-          <rect x="140" y="56" width="20" height="16" fill="#cbd5e1" />
-          {phase === 'heat' && (
-            <path d="M150 12 q-26 20 -6 40 q6 -10 6 -14 q0 10 10 14 q20 -18 -10 -40z" fill="#f97316" stroke="#fde047" strokeWidth="3"
-              style={{ transformOrigin: '150px 52px', animation: 'rcflame .3s infinite', opacity: heatUI ? 1 : 0.35 }} />
-          )}
+        <svg width="300" height="130" viewBox="0 0 300 130" style={{ overflow: 'visible' }}>
+          {phase === 'heat' && <ellipse cx="150" cy="-18" rx="90" ry="12" fill="#ff8a3c" style={{ animation: 'rcflame .4s infinite', opacity: heatUI ? 0.95 : 0.3 }} />}
+          <image href="/assets/items/hotplate.webp" x="20" y="-62" width="260" height="163" pointerEvents="none" />
         </svg>
       </div>
       {phase === 'heat' && !heated && <Arrow x={280} y={660} rot={0} />}
@@ -265,13 +260,9 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
 
       {/* 얼음 비커 */}
       <div style={{ position: 'absolute', left: ICE.x, top: ICE.y, width: ICE.w, height: ICE.h }}>
-        <svg width={ICE.w} height={ICE.h} viewBox="0 0 290 240">
-          <rect x="6" y="6" width="278" height="230" rx="16" fill="#7dd3fc" fillOpacity=".25" stroke="#bae6fd" strokeWidth="5" />
-          {[[30, 30], [100, 24], [180, 34], [235, 26], [60, 90], [200, 100]].map(([cx, cy], i) => (
-            <rect key={i} x={cx} y={cy} width="44" height="38" rx="6" fill="#e0f2fe" fillOpacity=".8" stroke="#7dd3fc" strokeWidth="2" transform={`rotate(${i * 13} ${cx + 22} ${cy + 19})`} />
-          ))}
-        </svg>
-        <div className="absolute bottom-2 w-full text-center text-lg font-bold">얼음물</div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/assets/items/icebucket.webp" alt="" draggable={false} style={{ position: 'absolute', left: 0, top: 0, width: ICE.w, pointerEvents: 'none' }} />
+        <div className="absolute w-full text-center text-2xl font-black" style={{ bottom: -40, color: '#fff', textShadow: '0 0 6px #000, 0 2px 4px #000' }}>얼음물</div>
       </div>
       {phase === 'heat' && dissolvedAll && !drag && <Arrow x={330 + 60} y={520} rot={10} />}
       {phase === 'heat' && drag && <div style={{ position: 'absolute', left: ICE.x - 10, top: ICE.y - 10, width: ICE.w + 20, height: ICE.h + 20, border: '4px dashed #fde047', borderRadius: 24, animation: 'rcpulse .8s infinite' }} />}
@@ -279,13 +270,15 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
       {/* 거름 장치 */}
       <div style={{ position: 'absolute', left: FUN.x, top: FUN.y, width: FUN.w, height: FUN.h }}>
         <svg width={FUN.w} height={FUN.h + 200} viewBox={`0 0 ${FUN.w} ${FUN.h + 200}`}>
-          <path d="M10 20 L230 20 L140 120 L140 170 L100 170 L100 120 Z" fill="#cfe9f7" fillOpacity=".25" stroke="#e6f4fb" strokeWidth="5" />
-          <path d="M40 24 L200 24 L120 104 Z" fill="#fffbe8" stroke="#d6c9a0" strokeWidth="3" />
-          {phase === 'result' && Array.from({ length: Math.ceil(fr.crystalG * 2.5) }).map((_, k) => (
-            <path key={k} d={`M${70 + ((k * 23) % 80)} ${44 + ((k * 7) % 22)} l6 -10 l6 10 l-6 10 z`} fill={fr.otherOnPaperG > 0.3 && k % 5 === 0 ? '#b8c4cc' : '#eef7ff'} stroke="#9cc7e8" strokeWidth="1.5" />
-          ))}
-          <rect x="30" y="230" width="180" height="150" rx="14" fill="#cfe9f7" fillOpacity=".2" stroke="#e6f4fb" strokeWidth="5" />
-          {(phase === 'pour' || phase === 'result') && <rect x="34" y={phase === 'result' ? 290 : 350} width="172" height={phase === 'result' ? 86 : 26} rx="8" fill="#5aa9e6" fillOpacity=".55" style={{ transition: 'all 1.2s' }} />}
+          <GlassG name="filterfunnel" x={20} y={0} w={200} h={270}>
+            <polygon points="34,8 206,8 122,110" fill="#fff6dc" />
+            {phase === 'result' && Array.from({ length: Math.ceil(fr.crystalG * 2.5) }).map((_, k) => (
+              <path key={k} d={`M${86 + ((k * 23) % 60)} ${30 + ((k * 7) % 30)} l6 -10 l6 10 l-6 10 z`} fill={fr.otherOnPaperG > 0.3 && k % 5 === 0 ? '#b8c4cc' : '#eef7ff'} stroke="#9cc7e8" strokeWidth="1.5" />
+            ))}
+          </GlassG>
+          <GlassG name="beaker-s" x={40} y={226} w={160} h={150}>
+            {(phase === 'pour' || phase === 'result') && <rect x="40" y={phase === 'result' ? 296 : 350} width="170" height={phase === 'result' ? 80 : 26} fill="#5aa9e6" fillOpacity=".7" style={{ transition: 'all 1.2s' }} />}
+          </GlassG>
         </svg>
         {phase === 'result' && <div className="absolute w-full text-center text-lg font-bold" style={{ top: FUN.h + 215 }}>{leaves[0]?.name} 용액</div>}
       </div>

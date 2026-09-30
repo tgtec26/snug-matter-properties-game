@@ -1,13 +1,13 @@
 'use client';
 
-import { StageBg } from '@/components/ui';
+import { GlassG, StageBg } from '@/components/ui';
 import { useEffect, useRef, useState } from 'react';
 import type { InvestigateProps } from '@/game/minigameTypes';
 import { playSfx } from '@/game/audio';
 import { calcStars, flowRate, labelCorrect, layerOrder, mixDelta, settle } from '@/game/minigames/densityCup';
 
 const CUP = { x: 540, y: 320, w: 200, h: 340 };
-const PIVOT = [{ x: 500, y: 300 }, { x: 780, y: 300 }];
+const PIVOT = [{ x: 470, y: 300 }, { x: 810, y: 300 }];
 const wallX = [CUP.x + 10, CUP.x + CUP.w - 10];
 const TAG_HOME = [{ x: 1000, y: 380 }, { x: 1000, y: 480 }];
 const now = () => performance.now();
@@ -189,16 +189,13 @@ export function DensityCup({ targets, config, onDone }: InvestigateProps) {
 
       <div className="absolute w-full text-center text-xl font-bold" style={{ top: 40, minHeight: 32, color: '#ffe082' }}>{msg}</div>
 
-      {/* 탁자 */}
-      <div className="absolute" style={{ left: 200, top: 660, width: 880, height: 14, background: '#5d4037', borderRadius: 6 }} />
-
-      {/* 컵 */}
-      <div className="absolute" style={{ left: CUP.x, top: CUP.y - 20, width: CUP.w, height: CUP.h + 20, borderLeft: '4px solid rgba(220,240,255,.85)', borderRight: '4px solid rgba(220,240,255,.85)', borderBottom: '4px solid rgba(220,240,255,.85)', borderRadius: '0 0 18px 18px', background: 'rgba(200,230,255,.07)' }} />
       <svg className="absolute" style={{ left: 0, top: 0, pointerEvents: 'none' }} width="1280" height="800">
+        <GlassG name="glass" x={CUP.x - 8} y={CUP.y - 14} w={CUP.w + 16} h={CUP.h + 30}>
         <g style={{ filter: `blur(${s.mix * 5}px)` }}>
           {order.map((sub, k) => { const r = layerRect(k); return r.h > 0 && <rect key={sub.id} x={CUP.x + 4} y={r.y0} width={CUP.w - 8} height={r.h} fill={sub.color} opacity=".85" />; })}
         </g>
         {s.amt[0] + s.amt[1] > 0 && <rect x={CUP.x + 4} y={surfaceY} width={CUP.w - 8} height={CUP.y + CUP.h - surfaceY} fill="#f3ecd0" opacity={s.mix * 0.8} />}
+        </GlassG>
         {/* 흐르는 줄기 (벽면을 타고) */}
         {[0, 1].map(i => flowRate(s.tilt[i]) > 0 && s.amt[i] < cap && (
           <path key={i} d={`M${PIVOT[i].x} ${PIVOT[i].y} Q${wallX[i]} ${PIVOT[i].y} ${wallX[i]} ${CUP.y + 30} L${wallX[i]} ${surfaceY}`} fill="none" stroke={bottleColor(i)} strokeWidth={4 + flowRate(s.tilt[i]) * 14} opacity=".9" strokeLinecap="round" />
@@ -213,10 +210,11 @@ export function DensityCup({ targets, config, onDone }: InvestigateProps) {
           <div key={i} className="absolute" style={{ left: PIVOT[i].x, top: PIVOT[i].y, width: 0, height: 0, transform: `rotate(${left ? s.tilt[i] : -s.tilt[i]}deg)`, transformOrigin: '0 0' }}>
             <div onPointerDown={e => bottleDown(e, i)} onPointerMove={e => bottleMove(e, i)} onPointerUp={() => bottleUp(i)} onPointerCancel={() => bottleUp(i)} onLostPointerCapture={() => bottleUp(i)}
               style={{ position: 'absolute', left: -70, top: -10, width: 140, height: 230, cursor: 'grab', touchAction: 'none' }}>
-              <div style={{ position: 'absolute', left: 55, top: 10, width: 30, height: 34, background: 'rgba(230,240,255,.5)', border: '3px solid #cfd8dc', borderBottom: 'none' }} />
-              <div style={{ position: 'absolute', left: 15, top: 44, width: 110, height: 170, border: '3px solid #cfd8dc', borderRadius: '24px 24px 12px 12px', background: 'rgba(230,240,255,.15)', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: `${(1 - s.amt[i] / cap) * 90}%`, background: bottleColor(i), opacity: 0.85 }} />
-              </div>
+              <svg width="140" height="230" viewBox="0 0 140 230" style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible', pointerEvents: 'none' }}>
+                <GlassG name="flask" x={15} y={0} w={110} h={162}>
+                  <rect x="0" y={155 - (1 - s.amt[i] / cap) * 100} width="140" height={(1 - s.amt[i] / cap) * 100 + 4} fill={bottleColor(i)} opacity="0.9" />
+                </GlassG>
+              </svg>
             </div>
           </div>
         );

@@ -216,13 +216,15 @@ export function DensityBench({ targets, config, onDone }: InvestigateProps) {
       <div className="absolute rounded-lg" style={{ left: TRAY.x0, top: TRAY.y0 + 20, width: TRAY.x1 - TRAY.x0, height: 130, border: '2px solid rgba(255,255,255,.4)', background: 'rgba(14,28,42,.88)' }} />
 
       {/* 눈금실린더 */}
-      <div className="absolute" style={{ left: TUBE.x0, top: TUBE.top, width: TUBE.x1 - TUBE.x0, height: TUBE.bottom - TUBE.top, border: '3px solid rgba(220,240,255,.85)', borderTop: 'none', borderRadius: '0 0 40px 40px', background: 'rgba(14,28,42,.7)' }}>
+      <div className="absolute" style={{ left: TUBE.x0, top: TUBE.top, width: TUBE.x1 - TUBE.x0, height: TUBE.bottom - TUBE.top, borderRadius: '0 0 40px 40px', overflow: 'hidden' }}>
         <div className="absolute left-0 right-0 bottom-0" style={{ height: (level - 0) * PX_PER_ML, background: 'linear-gradient(rgba(90,169,230,.75),rgba(60,130,200,.9))', transition: 'height .7s ease', borderRadius: '0 0 37px 37px' }}>
           <svg width={TUBE.x1 - TUBE.x0 - 6} height="14" style={{ position: 'absolute', top: -7, left: 0 }}>
             <path d={`M0 2 Q${(TUBE.x1 - TUBE.x0 - 6) / 2} 16 ${TUBE.x1 - TUBE.x0 - 6} 2`} fill="none" stroke="rgba(255,255,255,.9)" strokeWidth="2" />
           </svg>
         </div>
       </div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/assets/items/cylinder.webp" alt="" draggable={false} className="absolute pointer-events-none" style={{ left: TUBE.x0 - 36, top: TUBE.top - 26, width: (TUBE.x1 - TUBE.x0) + 72, height: (TUBE.bottom - TUBE.top) + 62 }} />
       <svg className="absolute" style={{ left: 780, top: 0, filter: `blur(${blur}px)` }} width="100" height="800">
         {Array.from({ length: 11 }, (_, i) => i * 10).map(ml => (
           <g key={ml}>

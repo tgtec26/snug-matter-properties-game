@@ -1,6 +1,6 @@
 'use client';
 
-import { StageBg } from '@/components/ui';
+import { GlassG, StageBg } from '@/components/ui';
 import { useEffect, useRef, useState } from 'react';
 import type { InvestigateProps } from '@/game/minigameTypes';
 import type { Substance } from '@/game/types';
@@ -23,27 +23,18 @@ const inRect = (px: number, py: number, r: { x: number; y: number; w: number; h:
 
 type Drag = { kind: 'spoon' | 'bottle'; x: number; y: number; dx: number; dy: number };
 
-function Icon({ s, size }: { s: Substance; size: number }) {
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={`/assets/items/${s.id}.webp`} alt="" width={size} height={size}
-      onError={e => { e.currentTarget.style.display = 'none'; }}
-      style={{ position: 'absolute', inset: 0, width: size, height: size, objectFit: 'contain', pointerEvents: 'none' }} />
-  );
-}
-
 function BottleView({ b, s, stirring, x, y }: { b: Bottle; s: Substance; stirring: boolean; x: number; y: number }) {
   const settledH = Math.min(90, b.settled * 45);
   const specks = Math.round(b.pending / SCOOP_G);
   return (
     <svg width={HOME.w} height={HOME.h} viewBox="0 0 180 300" style={{ position: 'absolute', left: x, top: y, pointerEvents: 'none' }}>
-      <rect x="20" y="70" width="140" height="220" rx="18" fill="#cfe9f7" fillOpacity=".25" stroke="#e6f4fb" strokeWidth="4" />
-      <rect x="55" y="30" width="70" height="44" rx="6" fill="#cfe9f7" fillOpacity=".25" stroke="#e6f4fb" strokeWidth="4" />
-      <rect x="24" y="130" width="132" height="156" rx="14" fill="#5aa9e6" fillOpacity={0.55} />
-      <rect x="26" y={284 - settledH} width="128" height={settledH} rx="8" fill={s.color} />
-      {Array.from({ length: specks }).map((_, i) => (
-        <circle key={i} cx={50 + ((i * 37) % 80)} cy={140 + ((i * 23) % 60)} r="4" fill={s.color} />
-      ))}
+      <GlassG name="bottle" x={15} y={8} w={150} h={288}>
+        <rect x="0" y="130" width="180" height="170" fill="#5aa9e6" fillOpacity={0.6} />
+        <rect x="0" y={282 - settledH} width="180" height={settledH + 2} fill={s.color} />
+        {Array.from({ length: specks }).map((_, i) => (
+          <circle key={i} cx={50 + ((i * 37) % 80)} cy={140 + ((i * 23) % 60)} r="4" fill={s.color} />
+        ))}
+      </GlassG>
       <g style={{ transformOrigin: '90px 270px', animation: stirring ? 'sbspin .35s linear infinite' : undefined }}>
         <rect x="70" y="266" width="40" height="8" rx="4" fill="#fff" stroke="#556" />
       </g>
@@ -51,7 +42,7 @@ function BottleView({ b, s, stirring, x, y }: { b: Bottle; s: Substance; stirrin
   );
 }
 
-function Pad({ x, y, onRub, active, hint }: { x: number; y: number; onRub: () => void; active: boolean; hint: boolean }) {
+function Pad({ x, y, onRub, hint }: { x: number; y: number; onRub: () => void; hint: boolean }) {
   const acc = useRef(0);
   const last = useRef<{ x: number; y: number } | null>(null);
   const [fill, setFill] = useState(0);
@@ -62,7 +53,7 @@ function Pad({ x, y, onRub, active, hint }: { x: number; y: number; onRub: () =>
   const end = () => { last.current = null; };
   return (
     <div
-      style={{ position: 'absolute', left: x, top: y, width: 220, height: 90, touchAction: 'none', cursor: 'grab' }}
+      style={{ position: 'absolute', left: x, top: y, width: 220, height: 130, touchAction: 'none', cursor: 'grab' }}
       onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); last.current = pt(e); }}
       onPointerMove={e => {
         if (!last.current) return;
@@ -74,11 +65,10 @@ function Pad({ x, y, onRub, active, hint }: { x: number; y: number; onRub: () =>
       }}
       onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end}
     >
-      <svg width="220" height="90" viewBox="0 0 220 90">
-        <rect x="6" y="30" width="208" height="54" rx="12" fill="#3b4256" stroke={active ? '#fde047' : '#8792ad'} strokeWidth="3" />
-        <ellipse cx="110" cy="30" rx="70" ry="10" fill="#565f7a" />
-        <rect x="24" y="66" width="172" height="8" rx="4" fill="#222735" />
-        <rect x="24" y="66" width={172 * fill} height="8" rx="4" fill="#fde047" />
+      <svg width="220" height="130" viewBox="0 0 220 130" style={{ overflow: 'visible' }}>
+        <image href="/assets/items/stirrer.webp" x="5" y="-30" width="210" height="152" pointerEvents="none" />
+        <rect x="34" y="112" width="152" height="8" rx="4" fill="#222735" />
+        <rect x="34" y="112" width={152 * fill} height="8" rx="4" fill="#fde047" />
         {hint && (
           <g style={{ animation: 'sbnudge 1s ease-in-out infinite' }}>
             <path d="M70 46 Q110 8 150 46" fill="none" stroke="#fde047" strokeWidth="4" strokeLinecap="round" />
@@ -228,7 +218,7 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
               const v = rec[t === 20 ? 'r20' : 'r60'];
               return (
                 <div key={t} className="rounded-lg px-4 py-2 text-lg font-semibold"
-                  style={{ background: v === undefined ? '#ffffff14' : '#16a34a', border: '2px solid #ffffff33' }}>
+                  style={{ background: v === undefined ? 'rgba(14,28,42,.92)' : '#16a34a', border: '2px solid rgba(255,255,255,.4)' }}>
                   {t} ℃ · {v === undefined ? '?' : `${v.toFixed(1)} g`}
                 </div>
               );
@@ -237,9 +227,11 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
 
           {/* 가루 통 + 약숟가락 */}
           <div className="absolute" style={{ left: 100, top: 470, width: 130, height: 120 }}>
-            <div style={{ position: 'absolute', inset: 0, background: '#ffffff18', border: '3px solid #ffffff66', borderRadius: '10px 10px 24px 24px' }} />
-            <div style={{ position: 'absolute', left: 10, right: 10, bottom: 8, height: 60, background: s.color, borderRadius: '6px 6px 18px 18px' }} />
-            <Icon s={s} size={130} />
+            <svg width="130" height="120" viewBox="0 0 130 120" style={{ position: 'absolute', inset: 0 }}>
+              <GlassG name="beaker-s" x={10} y={0} w={104} h={120}>
+                <rect x="0" y="62" width="130" height="60" fill={s.color} />
+              </GlassG>
+            </svg>
             <div className="absolute -bottom-9 w-full text-center text-lg font-semibold">{s.name}</div>
           </div>
           <div
@@ -248,9 +240,8 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
             onPointerUp={endDrag(true)} onPointerCancel={endDrag(false)} onLostPointerCapture={() => setDrag(null)}
           >
             <svg width="170" height="130" viewBox="0 0 170 130">
-              <rect x="70" y="60" width="90" height="10" rx="5" fill="#cbd5e1" transform="rotate(-25 70 60)" />
-              <ellipse cx="50" cy="80" rx="34" ry="20" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="3" />
-              <ellipse cx="50" cy="74" rx="26" ry="10" fill={s.color} />
+              <image href="/assets/items/spoon.webp" x="0" y="-8" width="170" height="138" />
+              <ellipse cx="32" cy="106" rx="17" ry="6" fill={s.color} opacity="0.95" />
             </svg>
             {scooped === 0 && !drag && (
               <svg width="120" height="40" viewBox="0 0 120 40" style={{ position: 'absolute', left: 140, top: 40, animation: 'sbnudge 1s ease-in-out infinite' }}>
@@ -267,14 +258,15 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
 
           {/* 60 ℃ 물 비커 */}
           <div style={{ position: 'absolute', left: BEAKER.x, top: BEAKER.y, width: BEAKER.w, height: BEAKER.h }}>
-            <svg width={BEAKER.w} height={BEAKER.h} viewBox="0 0 260 290">
-              <rect x="10" y="60" width="240" height="220" rx="14" fill="#f97316" fillOpacity=".32" stroke="#ffd7b0" strokeWidth="5" />
-              <rect x="14" y="90" width="232" height="186" rx="10" fill="#fb923c" fillOpacity=".5" />
-              {[60, 120, 190].map((cx, i) => (
-                <path key={i} d={`M${cx} 50 q-10 -16 0 -30 q10 -14 0 -28`} fill="none" stroke="#ffffff88" strokeWidth="4" strokeLinecap="round" style={{ animation: `sbpulse ${1.2 + i * 0.3}s infinite` }} />
+            <svg width={BEAKER.w} height={BEAKER.h} viewBox="0 0 260 290" style={{ overflow: 'visible' }}>
+              <GlassG name="beaker-l" x={10} y={6} w={240} h={284}>
+                <rect x="0" y="90" width="260" height="200" fill="#fb923c" fillOpacity=".62" />
+              </GlassG>
+              {[80, 130, 180].map((cx, i) => (
+                <path key={i} d={`M${cx} 30 q-10 -16 0 -30 q10 -14 0 -28`} fill="none" stroke="#ffffffaa" strokeWidth="4" strokeLinecap="round" style={{ animation: `sbpulse ${1.2 + i * 0.3}s infinite` }} />
               ))}
             </svg>
-            <div className="absolute bottom-3 w-full text-center text-2xl font-bold">60 ℃</div>
+            <div className="absolute w-full text-center text-3xl font-black" style={{ bottom: 70, textShadow: '0 2px 6px #000, 0 0 12px #000' }}>60 ℃</div>
           </div>
           {canDip && !drag && (
             <svg width="120" height="50" viewBox="0 0 120 50" style={{ position: 'absolute', left: 620, top: 400, animation: 'sbnudge 1s ease-in-out infinite' }}>
@@ -293,13 +285,13 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
             onPointerDown={canDip ? startDrag('bottle', HOME.x, HOME.y) : undefined} onPointerMove={moveDrag}
             onPointerUp={endDrag(true)} onPointerCancel={endDrag(false)} onLostPointerCapture={() => setDrag(null)}
           />
-          <div className="absolute text-center text-xl font-semibold" style={{ left: HOME.x, top: HOME.y + HOME.h + 100, width: HOME.w + 40 }}>
+          <div className="absolute text-center text-xl font-bold rounded-xl px-3 py-1" style={{ left: HOME.x - 40, top: HOME.y - 52, width: HOME.w + 80, background: 'rgba(14,28,42,.92)', border: '1px solid rgba(255,255,255,.35)' }}>
             <span className="text-slate-300">넣은 양</span> {total.toFixed(1)} g · <span className="text-slate-300">녹은 양</span> {bottle.dissolved.toFixed(1)} g
           </div>
 
           {/* 자석 젓개 판 (병 아래, 비커 아래) */}
-          <Pad x={HOME.x - 20} y={HOME.y + HOME.h + 6} onRub={stirOnce} active={stirring} hint={bottle.pending > 0} />
-          <Pad x={BEAKER.x + 20} y={BEAKER.y + BEAKER.h + 6} onRub={stirOnce} active={stirring} hint={dipped && bottle.pending > 0} />
+          <Pad x={HOME.x - 20} y={HOME.y + HOME.h + 6} onRub={stirOnce} hint={bottle.pending > 0} />
+          <Pad x={BEAKER.x + 20} y={BEAKER.y + BEAKER.h + 6} onRub={stirOnce} hint={dipped && bottle.pending > 0} />
 
           <div className="absolute bottom-3 left-8 text-base text-slate-400">Space 넣기 · S 젓기 · Enter 담그기</div>
         </>
