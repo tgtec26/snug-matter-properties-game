@@ -6,14 +6,14 @@ import { playSfx } from '@/game/audio';
 import { inSieve, judgeSieve, makeGrains, sieveCfg, type Grain, type SieveJudge } from '@/game/minigames/floatSieve';
 
 // 무대 1280×800. 배경 bg/farmtable.webp 의 탁자 위에 그릇·유리 통·접시·체를 놓는다.
-const BOWL = { x: 100, y: 343, w: 300, h: 227 };       // 그릇 그림 (빈 그릇)
-const PIVOT = { x: 340, y: 520 };                      // 그릇을 기울일 때의 축(오른쪽 아래 모서리)
+const BOWL = { x: 100, y: 303, w: 300, h: 227 };       // 그릇 그림 (빈 그릇)
+const PIVOT = { x: 340, y: 480 };                      // 그릇을 기울일 때의 축(오른쪽 아래 모서리)
 const LIP = { x: 39, y: -113 };                        // 그릇 입구(축 기준)
 const BOWL_FLOOR = { x: -93, y: -59 };                 // 그릇 바닥 가운데(축 기준)
-const TUB = { l: 430, r: 870, top: 450, bottom: 660, water: 520 };
-const TRAY = { x: 950, y: 530 };                       // 접시 위 놓는 판정
-const PLATE = { x: 920, y: 497, w: 320, h: 205 };
-const SIEVE0 = { x: 1130, y: 450 };
+const TUB = { l: 430, r: 870, top: 410, bottom: 620, water: 480 };
+const TRAY = { x: 950, y: 490 };                       // 접시 위 놓는 판정
+const PLATE = { x: 920, y: 457, w: 320, h: 205 };
+const SIEVE0 = { x: 1130, y: 410 };
 const SIEVE_IMG = { fx: 0.30, fy: 0.64, ar: 498 / 520 }; // 체 그림에서 망 중심 위치
 const LOCK_MS = 700;
 
@@ -256,8 +256,8 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
         </g>
         {!s.started && s.angle < 20 && (
           <g style={bounce} pointerEvents="none">
-            <path d="M420 350 q70 -50 130 20" fill="none" stroke="#e07a1f" strokeWidth={9} strokeLinecap="round" />
-            <path d="M540 362 l14 24 l-26 -4" fill="none" stroke="#e07a1f" strokeWidth={9} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M420 310 q70 -50 130 20" fill="none" stroke="#e07a1f" strokeWidth={9} strokeLinecap="round" />
+            <path d="M540 322 l14 24 l-26 -4" fill="none" stroke="#e07a1f" strokeWidth={9} strokeLinecap="round" strokeLinejoin="round" />
           </g>
         )}
 
@@ -267,7 +267,7 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
         {worldGrains.filter((x) => x.st === 'carried').map(grainEl)}
         <circle data-hit="sieve" cx={s.sieve.x} cy={s.sieve.y} r={cfg.sieveRadius + 26} fill="transparent" style={{ cursor: 'grab' }} />
         {s.started && !s.carrying && !inTray && s.elapsed < 8 && (
-          <path d="M1010 470 h-70 l14 -14 m-14 14 l14 14" fill="none" stroke="#e07a1f" strokeWidth={8} strokeLinecap="round" style={bounce} pointerEvents="none" />
+          <path d="M1010 430 h-70 l14 -14 m-14 14 l14 14" fill="none" stroke="#e07a1f" strokeWidth={8} strokeLinecap="round" style={bounce} pointerEvents="none" />
         )}
       </svg>
 
