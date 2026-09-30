@@ -1,6 +1,7 @@
 'use client';
 
 import { useId, useState } from 'react';
+import SHAPES from '@/game/glassShapes.json';
 import { useDataStore } from '@/game/dataStore';
 
 /** 이미지가 없으면 fallback을 보여 준다 (플레이스홀더 → WebP 자동 교체) */
@@ -60,17 +61,19 @@ export function StageBg({ name, dark = 0.55 }: { name: 'lab' | 'labheat' | 'kitc
   );
 }
 
-/** SVG 안에서 쓰는 유리 도구: 액체(children)를 유리 안쪽 모양(-sil)으로 잘라 그린 뒤 유리 그림을 덮는다 */
+/** SVG 안에서 쓰는 유리 도구: 액체(children)를 유리 안쪽 모양(glassShapes.json)으로 잘라 그린 뒤 유리 그림을 덮는다 */
 export function GlassG({ name, x, y, w, h, children, opacity = 1 }: { name: string; x: number; y: number; w: number; h: number; children?: React.ReactNode; opacity?: number }) {
-  const id = useId().replace(/:/g, '');
+  const id = 'gl' + useId().replace(/[^a-zA-Z0-9]/g, '');
+  const rows = (SHAPES as Record<string, number[][]>)[name];
+  const pts = rows
+    ? [...rows.map(([fy, l]) => `${x + l * w},${y + fy * h}`), ...[...rows].reverse().map(([fy, , r]) => `${x + r * w},${y + fy * h}`)].join(' ')
+    : '';
   return (
     <g>
-      {children && (
+      {children && pts && (
         <>
-          <mask id={id} maskUnits="userSpaceOnUse" x={x} y={y} width={w} height={h}>
-            <image href={`/assets/items/${name}-sil.webp`} x={x} y={y} width={w} height={h} preserveAspectRatio="none" />
-          </mask>
-          <g mask={`url(#${id})`}>{children}</g>
+          <clipPath id={id}><polygon points={pts} /></clipPath>
+          <g clipPath={`url(#${id})`}>{children}</g>
         </>
       )}
       <image href={`/assets/items/${name}.webp`} x={x} y={y} width={w} height={h} preserveAspectRatio="none" opacity={opacity} pointerEvents="none" />

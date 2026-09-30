@@ -8,6 +8,8 @@ src, cols, rows, out, px = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.
 names = sys.argv[6:]
 im = Image.open(src).convert('RGBA'); W, H = im.size; p = im.load()
 obj = im.getchannel('A').point(lambda v: 255 if v >= 240 else 0).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.7))
+core = obj.filter(ImageFilter.MinFilter(21)).filter(ImageFilter.GaussianBlur(3))  # 유리 안쪽(벽에서 떨어진 곳)
+c_ = core.load()
 o = obj.load()
 res = Image.new('RGBA', (W, H)); rp = res.load()
 for y in range(H):
@@ -16,7 +18,7 @@ for y in range(H):
         m = o[x, y]
         if m == 0: rp[x, y] = (0, 0, 0, 0); continue
         green = max(0.0, min(1.0, (g - max(r, b) - 4) / 34.0))
-        alpha = int(m * (1 - green * 0.97))
+        alpha = int(m * (1 - green * 0.97) * (1 - 0.88 * c_[x, y] / 255))
         # 초록 번짐 제거: 남는 픽셀의 초록을 중립으로
         gg = min(g, max(r, b) + 4)
         rp[x, y] = (r, gg, b, alpha)
@@ -30,15 +32,23 @@ for i, n in enumerate(names):
     cell = cell.resize((round(cell.size[0] * s), round(cell.size[1] * s)), Image.LANCZOS)
     cell.save(f'{out}/{n}.webp', quality=92); print(n, cell.size)
 
-# 유리 안쪽에 액체를 채울 때 쓰는 실루엣(흰색, 안쪽으로 조금 깎음) — <이름>-sil.webp
+# 유리 안쪽 모양(행마다 왼쪽·오른쪽 끝, 0~1) → game/glassShapes.json. 액체를 clipPath로 잘라 채울 때 쓴다.
+import json
+shapes = {}
 for i, n in enumerate(names):
     if n == '-': continue
     r_, c = divmod(i, cols)
     cell = obj.crop((c * cw, r_ * ch, (c + 1) * cw, (r_ + 1) * ch))
     full = res.crop((c * cw, r_ * ch, (c + 1) * cw, (r_ + 1) * ch))
     bb = full.getchannel('A').point(lambda v: 255 if v > 90 else 0).getbbox()
-    cell = cell.crop(bb).point(lambda v: 255 if v > 128 else 0)
-    s = px / max(cell.size)
-    cell = cell.resize((round(cell.size[0] * s), round(cell.size[1] * s)), Image.LANCZOS).filter(ImageFilter.MinFilter(9)).filter(ImageFilter.GaussianBlur(1.5))
-    sil = Image.new('RGBA', cell.size, (255, 255, 255, 0)); sil.putalpha(cell)
-    sil.save(f'{out}/{n}-sil.webp', quality=90)
+    cell = cell.crop(bb).point(lambda v: 255 if v > 128 else 0).filter(ImageFilter.MinFilter(9))
+    W2, H2 = cell.size; cp = cell.load()
+    rows_ = []
+    N = 70
+    for k in range(N + 1):
+        y = min(H2 - 1, int(k / N * (H2 - 1)))
+        xs = [x for x in range(W2) if cp[x, y] > 128]
+        if xs: rows_.append([round(y / H2, 4), round(min(xs) / W2, 4), round((max(xs) + 1) / W2, 4)])
+    shapes[n] = rows_
+json.dump(shapes, open('game/glassShapes.json', 'w'))
+print('shapes', len(shapes))

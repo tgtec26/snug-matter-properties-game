@@ -1,5 +1,5 @@
 'use client';
-import { StageBg } from '@/components/ui';
+import { GlassG, StageBg } from '@/components/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { InvestigateProps } from '@/game/minigameTypes';
 import { playSfx } from '@/game/audio';
@@ -157,30 +157,30 @@ export function HeatingCurve({ targets, config, onDone }: InvestigateProps) {
             <text x={GX + 12} y={py(rec.temp) - 10} fill="#7cf0a8" fontSize="26" fontWeight="700">{Math.round(rec.temp)} ℃</text>
           </g>
         )}
-        {/* 가열대 */}
-        <rect x={PAD.x - 110} y={PAD.y + 90} width="220" height="30" rx="8" fill="#55627a" />
-        <rect x={PAD.x - 90} y={PAD.y + 60} width="180" height="34" rx="6" fill="#3a4558" />
+        {/* 가열대(Codex 그림) */}
+        <image href="/assets/items/hotplate.webp" x={PAD.x - 120} y={PAD.y + 22} width={240} height={151} />
         {phase === 'place' && (
           <circle cx={PAD.x} cy={PAD.y + 20} r="100" fill="none" stroke="#ffd27a" strokeWidth="4" strokeDasharray="10 10">
             <animate attributeName="stroke-opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite" />
           </circle>
         )}
-        {phase === 'heat' && [-40, 0, 40].map((dx, i) => (
-          <path key={dx} d={`M${PAD.x + dx} ${PAD.y + 58} q-10 -22 0 -36 q14 14 0 36z`} fill="#ff9a3c">
-            <animate attributeName="opacity" values="1;0.4;1" dur={`${0.5 + i * 0.15}s`} repeatCount="indefinite" />
-          </path>
-        ))}
+        {phase === 'heat' && (
+          <ellipse cx={PAD.x} cy={PAD.y + 66} rx="78" ry="11" fill="#ff8a3c">
+            <animate attributeName="opacity" values="0.9;0.45;0.9" dur="0.8s" repeatCount="indefinite" />
+          </ellipse>
+        )}
         {phase === 'place' && !drag && (
           <path d={`M${SHELF.x + 70} ${SHELF.y - 10} L${PAD.x - 100} ${PAD.y - 10}`} stroke="#ffd27a" strokeWidth="5" strokeDasharray="4 12" strokeLinecap="round">
             <animate attributeName="stroke-dashoffset" values="0;-32" dur="0.8s" repeatCount="indefinite" />
           </path>
         )}
         {/* 비커 (드래그 대상) */}
-        <g transform={`translate(${bx} ${by})`} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={() => setDrag(null)}
-          style={{ cursor: phase === 'place' ? 'grab' : 'default', touchAction: 'none' }}>
+        <g onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={() => setDrag(null)}
+          style={{ transform: `translate(${bx}px, ${by}px)`, cursor: phase === 'place' ? 'grab' : 'default', touchAction: 'none' }}>
           <rect x="-90" y="-100" width="180" height="200" fill="transparent" />
-          <rect x="-56" y="-70" width="112" height="140" rx="10" fill="#ffffff10" stroke="#cfe3ff" strokeWidth="4" />
-          <rect x="-52" y={66 - liquidH} width="104" height={liquidH} rx="6" fill={sub.color} opacity="0.85" />
+          <GlassG name="beaker-s" x={-64} y={-80} w={128} h={148}>
+            <rect x="-70" y={58 - liquidH} width="140" height={liquidH + 2} fill={sub.color} opacity="0.85" />
+          </GlassG>
           {phase === 'heat' && t >= tr && [-20, 0, 22].map((dx) => (
             <circle key={dx} cx={dx} cy="30" r="6" fill="#ffffffaa"><animate attributeName="cy" values="50;-30" dur="0.7s" repeatCount="indefinite" /></circle>
           ))}
