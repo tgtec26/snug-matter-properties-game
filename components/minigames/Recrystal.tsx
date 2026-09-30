@@ -1,5 +1,6 @@
 'use client';
 
+import { StageBg } from '@/components/ui';
 import { useEffect, useRef, useState } from 'react';
 import type { SeparateProps } from '@/game/minigameTypes';
 import type { Substance } from '@/game/types';
@@ -209,6 +210,7 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
   return (
     <div data-stage className="absolute inset-0 pointer-events-auto select-none overflow-hidden text-white"
       style={{ background: 'linear-gradient(160deg,#1c2b45,#101a2e)', touchAction: 'none' }}>
+      <StageBg name="labheat" dark={0.5} />
       <style>{`@keyframes rcnudge{0%,100%{translate:-10px 0}50%{translate:10px 0}}@keyframes rcpulse{0%,100%{opacity:.4}50%{opacity:1}}@keyframes rcflame{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.25)}}`}</style>
 
       <Graph sim={sim} subs={subs} cfg={cfg} />

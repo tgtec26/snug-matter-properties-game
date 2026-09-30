@@ -1,11 +1,14 @@
 'use client';
 
+import { GlassG, StageBg } from '@/components/ui';
 import { useEffect, useRef, useState } from 'react';
 import type { SeparateProps } from '@/game/minigameTypes';
 import { playSfx } from '@/game/audio';
 import { funnelCfg, judgeFunnel, settleStep, type FunnelJudge, type FunnelReason } from '@/game/minigames/funnel';
 
-const CX = 560, L = 470, R = 650, TOP = 170, BOT = 470; // 깔때기 몸통
+const CX = 560, L = 480, R = 640, TOP = 170, BOT = 481; // 깔때기 몸통(그림 기준)
+const SF = { x: 479, y: 88, w: 162, h: 520 };          // 분별 깔때기 그림 (bg 위)
+const FY = 499;                                        // 꼭지(손잡이) 높이
 const HB = 150, HT = 110;   // 아래층·위층 높이(px)
 const K = 80;               // 비커에 받은 양 1.0 = 80px
 const PIVOT_Y = 320;
@@ -198,21 +201,23 @@ export function Funnel({ mixture, obtains, config, onDone }: SeparateProps) {
     phase === 'pour' ? '깔때기를 기울여 입구로 위층을 따라요' : '';
 
   const bounce = { animation: 'fbounce 0.9s ease-in-out infinite' } as const;
-  const pulse = { animation: 'fpulse 1s ease-in-out infinite', transformOrigin: `${CX}px 548px` } as const;
+  const pulse = { animation: 'fpulse 1s ease-in-out infinite', transformOrigin: `${CX}px ${FY}px` } as const;
 
   const beaker = (x: number, y: number, label: string, fills: { color: string; h: number }[], sc = 1, trans = true) => {
     let acc = 0;
     return (
       <g style={{ transform: `translate(${x}px, ${y}px) scale(${sc})`, transition: trans ? 'transform .5s ease' : 'none' }}>
-        {fills.map((f, i) => { acc += f.h; return <rect key={i} x={-52} y={-acc} width={104} height={f.h + 0.5} fill={f.color} opacity={0.9} />; })}
-        <path d="M-56 -100 V0 H56 V-100" fill="rgba(255,255,255,0.25)" stroke="#5b6b78" strokeWidth={4} />
-        <text x={0} y={30} textAnchor="middle" fontSize={22} fontWeight={700} fill="#33414d">{label}</text>
+        <GlassG name="beaker-l" x={-58} y={-116} w={116} h={140}>
+          {fills.map((f, i) => { acc += f.h; return <rect key={i} x={-60} y={-acc - 4} width={120} height={f.h + 0.5} fill={f.color} opacity={0.92} />; })}
+        </GlassG>
+        <text x={0} y={52} textAnchor="middle" fontSize={24} fontWeight={800} fill="#fff" stroke="#3a2412" strokeWidth={5} paintOrder="stroke">{label}</text>
       </g>
     );
   };
 
   return (
     <div className="absolute inset-0 pointer-events-auto select-none overflow-hidden" style={{ background: 'linear-gradient(180deg,#eaf2f8,#c6d9e6)', wordBreak: 'keep-all' }}>
+      <StageBg name="kitchen" dark={0.0} />
       <style>{`@keyframes fbounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}@keyframes fpulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.25);opacity:.4}}`}</style>
       <svg ref={svgRef} viewBox="0 0 1280 800" className="absolute inset-0 w-full h-full" style={{ touchAction: 'none' }}
         onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onLostPointerCapture={onUp}>
@@ -227,58 +232,54 @@ export function Funnel({ mixture, obtains, config, onDone }: SeparateProps) {
         {beaker(xB, 745, '경계면', segB, 0.75)}
 
         <g transform={`rotate(${s.angle + Math.sin(s.t * 0.03) * s.rock * 5} ${CX} ${PIVOT_Y})`}>
-          {/* 액체 */}
-          <g clipPath="url(#fbody)">
-            <rect x={L} y={BOT - botH} width={R - L} height={botH} fill={botColor} opacity={0.9} />
-            <rect x={L} y={BOT - botH - topH} width={R - L} height={topH} fill={topColor} opacity={0.9} />
-            {botH0 > 0 || s.p < 1 + c.band ? (
-              <rect x={L} y={interfY - bandH} width={R - L} height={bandH * 2} fill="url(#fband)" opacity={0.85} />
-            ) : null}
-            {s.p === 0 && (
-              <rect x={L} y={BOT - HB - HT} width={R - L} height={HB + HT} style={{ fill: mixColor }} opacity={(1 - settledFrac) * 0.92} />
-            )}
+          {/* 유리 깔때기(Codex 그림) + 안쪽 액체. 마개를 열면 마개 부분만 떼어 올린다 */}
+          <clipPath id="fs-lower"><rect x={SF.x - 40} y={SF.y + SF.h * 0.17} width={SF.w + 80} height={SF.h} /></clipPath>
+          <clipPath id="fs-upper"><rect x={SF.x - 40} y={SF.y - 10} width={SF.w + 80} height={SF.h * 0.17 + 10} /></clipPath>
+          <g clipPath={s.stopperOpen ? 'url(#fs-lower)' : undefined}>
+            <GlassG name="sepfunnel" x={SF.x} y={SF.y} w={SF.w} h={SF.h}>
+              <rect x={L} y={BOT - botH} width={R - L} height={botH} fill={botColor} opacity={0.92} />
+              <rect x={L} y={BOT - botH - topH} width={R - L} height={topH} fill={topColor} opacity={0.92} />
+              {botH0 > 0 || s.p < 1 + c.band ? (
+                <rect x={L} y={interfY - bandH} width={R - L} height={bandH * 2} fill="url(#fband)" opacity={0.85} />
+              ) : null}
+              {s.p === 0 && (
+                <rect x={L} y={BOT - HB - HT} width={R - L} height={HB + HT} style={{ fill: mixColor }} opacity={(1 - settledFrac) * 0.92} />
+              )}
+            </GlassG>
           </g>
-          {/* 유리 */}
-          <path d={`M${L} ${TOP} V${BOT} L545 520 H575 L${R} ${BOT} V${TOP}`} fill="rgba(255,255,255,0.18)" stroke="#5b6b78" strokeWidth={5} strokeLinejoin="round" />
-          <rect x={550} y={520} width={20} height={65} fill="rgba(255,255,255,0.35)" stroke="#5b6b78" strokeWidth={4} />
+          {s.stopperOpen && (
+            <g style={{ transform: 'translate(90px,-80px) rotate(35deg)', transformOrigin: `${CX}px ${SF.y + SF.h * 0.1}px`, transition: 'transform .3s ease' }}>
+              <g clipPath="url(#fs-upper)"><image href="/assets/items/sepfunnel.webp" x={SF.x} y={SF.y} width={SF.w} height={SF.h} preserveAspectRatio="none" /></g>
+            </g>
+          )}
           {/* 꼭지 높이(경계면이 여기 닿기 전에 놓기) */}
-          <line x1={L - 22} x2={L} y1={BOT} y2={BOT} stroke="#d1495b" strokeWidth={4} strokeDasharray="6 4" />
-          <text x={L - 26} y={BOT + 6} textAnchor="end" fontSize={20} fill="#d1495b" fontWeight={700}>꼭지</text>
+          <line x1={L - 34} x2={L - 6} y1={BOT} y2={BOT} stroke="#ff6b6b" strokeWidth={5} strokeDasharray="6 4" />
+          <text x={L - 40} y={BOT + 7} textAnchor="end" fontSize={22} fill="#fff" stroke="#3a2412" strokeWidth={5} paintOrder="stroke" fontWeight={800}>꼭지</text>
           {/* 층 이름표 */}
           {phase === 'open' && <>
-            <text x={R + 16} y={BOT - HB - HT / 2} fontSize={22} fontWeight={700} fill="#33414d">{top?.name}</text>
-            <text x={R + 16} y={BOT - HB / 2} fontSize={22} fontWeight={700} fill="#33414d">{botLabel}</text>
+            <text x={R + 30} y={BOT - HB - HT / 2} fontSize={24} fontWeight={800} fill="#fff" stroke="#3a2412" strokeWidth={5} paintOrder="stroke">{top?.name}</text>
+            <text x={R + 30} y={BOT - HB / 2} fontSize={24} fontWeight={800} fill="#fff" stroke="#3a2412" strokeWidth={5} paintOrder="stroke">{botLabel}</text>
           </>}
-          {/* 꼭지 손잡이 */}
-          <g style={{ transform: `rotate(${s.holding ? 90 : 0}deg)`, transformOrigin: `${CX}px 548px`, transition: 'transform .15s' }}>
-            <rect x={CX - 32} y={542} width={64} height={12} rx={6} fill="#3d5a80" />
-          </g>
-          <circle cx={CX} cy={548} r={9} fill="#293241" />
           {/* 물줄기 */}
-          {flowing && <rect x={CX - 4} y={585} width={8} height={110} style={{ fill: flowColor }} opacity={0.9} />}
-          {/* 마개 */}
-          <g style={{ transform: s.stopperOpen ? 'translate(90px,-80px) rotate(35deg)' : 'none', transformOrigin: `${CX}px ${TOP}px`, transition: 'transform .3s ease' }}>
-            <path d={`M${CX - 30} ${TOP - 30} H${CX + 30} L${CX + 20} ${TOP + 8} H${CX - 20} Z`} fill="#c97b3c" stroke="#7a4a1f" strokeWidth={4} />
-            <rect x={CX - 12} y={TOP - 46} width={24} height={16} rx={6} fill="#c97b3c" stroke="#7a4a1f" strokeWidth={4} />
-          </g>
+          {flowing && <rect x={CX - 4} y={SF.y + SF.h - 8} width={8} height={110} style={{ fill: flowColor }} opacity={0.92} />}
           {/* 손 대는 곳 (잡는 영역은 넉넉히) */}
-          <rect data-hit="body" x={L - 20} y={TOP - 10} width={R - L + 40} height={BOT - TOP + 20} fill="transparent" style={{ cursor: 'grab' }} />
-          <rect data-hit="stopper" x={CX - 60} y={TOP - 90} width={120} height={110} fill="transparent" style={{ cursor: 'grab' }} />
-          <circle data-hit="faucet" cx={CX} cy={548} r={58} fill="transparent" style={{ cursor: 'pointer' }} />
+          <rect data-hit="body" x={L - 30} y={SF.y + 60} width={R - L + 60} height={BOT - SF.y - 50} fill="transparent" style={{ cursor: 'grab' }} />
+          <rect data-hit="stopper" x={CX - 50} y={SF.y - 10} width={100} height={SF.h * 0.17 + 10} fill="transparent" style={{ cursor: 'grab' }} />
+          <circle data-hit="faucet" cx={CX} cy={FY} r={58} fill="transparent" style={{ cursor: 'pointer' }} />
         </g>
 
         {/* 비언어 안내 */}
-        {phase === 'open' && <g style={bounce}><path d={`M${CX} ${TOP - 110} l-24 30 h16 v26 h16 v-26 h16 z`} fill="#e07a1f" /></g>}
-        {phase === 'drainA' && !s.holding && s.p === 0 && <circle cx={CX} cy={548} r={44} fill="none" stroke="#e07a1f" strokeWidth={6} style={pulse} />}
-        {phase === 'drainB' && !s.holding && <circle cx={CX} cy={548} r={44} fill="none" stroke="#e07a1f" strokeWidth={6} style={pulse} />}
+        {phase === 'open' && <g style={bounce}><path d={`M${CX} ${SF.y - 60} l-24 30 h16 v26 h16 v-26 h16 z`} fill="#e07a1f" /></g>}
+        {phase === 'drainA' && !s.holding && s.p === 0 && <circle cx={CX} cy={FY} r={44} fill="none" stroke="#ffb347" strokeWidth={6} style={pulse} />}
+        {phase === 'drainB' && !s.holding && <circle cx={CX} cy={FY} r={44} fill="none" stroke="#ffb347" strokeWidth={6} style={pulse} />}
         {phase === 'pour' && s.angle < 30 && <path d="M720 190 q70 10 80 90 l14 -14 m-14 14 l-18 -18" fill="none" stroke="#e07a1f" strokeWidth={8} strokeLinecap="round" style={bounce} />}
         {phase === 'settle' && s.s < 1 && (
           <rect x={L} y={TOP - 30} width={(R - L) * s.s} height={8} rx={4} fill="#3d5a80" opacity={0.6} />
         )}
       </svg>
 
-      <div className="absolute left-6 top-4 text-[26px] font-bold text-[#22303c]">분별 깔때기 · 위층 {top?.name} / 아래층 {botLabel}</div>
-      <div className="absolute left-6 top-[62px] max-w-[520px] text-[22px] font-bold text-[#b45309] pointer-events-none">{hint}</div>
+      <div className="absolute left-6 top-4 rounded-xl bg-amber-50/95 px-4 py-1 text-[26px] font-bold text-[#22303c] shadow">분별 깔때기 · 위층 {top?.name} / 아래층 {botLabel}</div>
+      <div className="absolute left-6 top-[66px] max-w-[560px] rounded-xl bg-amber-50/95 px-4 py-1 text-[22px] font-bold text-[#b45309] shadow pointer-events-none">{hint}</div>
 
       {phase === 'result' && s.result && (
         <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(20,30,40,0.45)' }}>

@@ -1,4 +1,5 @@
 'use client';
+import { GlassG, StageBg } from '@/components/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { SeparateProps } from '@/game/minigameTypes';
 import { playSfx } from '@/game/audio';
@@ -7,8 +8,8 @@ import {
   type DistillState,
 } from '@/game/minigames/distill';
 
-const FLASK = { x: 230, y: 420 };
-const DIAL = { x: 230, y: 690 };
+const FLASK = { x: 230, y: 360 };
+const DIAL = { x: 230, y: 706 };
 const RACK = { x: 760, y: 600, gap: 100 };
 const ICE = { x: 1150, y: 470 };
 const LABELS = ['가', '나', '다', '라', '마', '바'];
@@ -176,6 +177,8 @@ export function Distill({ obtains, saltRemains, config, onDone }: SeparateProps)
   return (
     <div className="absolute inset-0 pointer-events-auto overflow-hidden select-none"
       style={{ background: 'linear-gradient(160deg,#1b2a44,#0e1626)', wordBreak: 'keep-all' }}>
+      <StageBg name="labheat" dark={0.5} />
+      <style>{`@keyframes dist-blink{0%,100%{opacity:1}50%{opacity:.35}}`}</style>
       <svg ref={svgRef} viewBox="0 0 1280 800" width="1280" height="800" className="absolute inset-0"
         style={{ touchAction: 'none' }} onPointerMove={move} onPointerUp={up} onPointerCancel={() => setDrag(null)}>
         {/* 그래프 */}
@@ -188,25 +191,19 @@ export function Distill({ obtains, saltRemains, config, onDone }: SeparateProps)
         <circle cx={gx(v.clock)} cy={gy(s.temp)} r="7" fill="#ffd27a" />
         <text x={G.x + G.w - 10} y={G.y + 32} fill="#ffd27a" fontSize="28" fontWeight="700" textAnchor="end">{Math.round(s.temp)} ℃</text>
 
-        {/* 플라스크 + 가열 */}
-        <rect x={FLASK.x - 110} y={FLASK.y + 150} width="220" height="24" rx="8" fill="#55627a" />
-        {v.power > 0 && [-50, 0, 50].map((dx) => (
-          <path key={dx} d={`M${FLASK.x + dx} ${FLASK.y + 148} q-${8 + v.power * 14} -${20 + v.power * 40} 0 -${30 + v.power * 50} q${8 + v.power * 14} ${14 + v.power * 30} 0 ${30 + v.power * 50}z`} fill="#ff9a3c" opacity="0.9" />
-        ))}
-        <path d={`M${FLASK.x - 34} ${FLASK.y - 120} L${FLASK.x - 34} ${FLASK.y - 40} L${FLASK.x - 110} ${FLASK.y + 100} Q${FLASK.x - 118} ${FLASK.y + 145} ${FLASK.x - 70} ${FLASK.y + 145} L${FLASK.x + 70} ${FLASK.y + 145} Q${FLASK.x + 118} ${FLASK.y + 145} ${FLASK.x + 110} ${FLASK.y + 100} L${FLASK.x + 34} ${FLASK.y - 40} L${FLASK.x + 34} ${FLASK.y - 120}`}
-          fill="#ffffff10" stroke="#cfe3ff" strokeWidth="4" />
-        <clipPath id="fl"><path d={`M${FLASK.x - 34} ${FLASK.y - 40} L${FLASK.x - 110} ${FLASK.y + 100} Q${FLASK.x - 118} ${FLASK.y + 145} ${FLASK.x - 70} ${FLASK.y + 145} L${FLASK.x + 70} ${FLASK.y + 145} Q${FLASK.x + 118} ${FLASK.y + 145} ${FLASK.x + 110} ${FLASK.y + 100} L${FLASK.x + 34} ${FLASK.y - 40}z`} /></clipPath>
-        <rect x={FLASK.x - 120} y={FLASK.y + 145 - 175 * flaskFrac} width="240" height={175 * flaskFrac} fill={flaskColor} opacity="0.75" clipPath="url(#fl)" />
-        {ended && saltRemains && (
-          <g clipPath="url(#fl)" fill="#ffffff">
-            {[[-50, 132], [-20, 128], [10, 134], [40, 130], [-5, 120], [25, 122]].map(([dx, dy], i) => (
-              <rect key={i} x={FLASK.x + dx} y={FLASK.y + dy} width="16" height="16" transform={`rotate(${i * 17} ${FLASK.x + dx + 8} ${FLASK.y + dy + 8})`}>
-                <animate attributeName="opacity" values="0;1" dur={`${0.4 + i * 0.15}s`} fill="freeze" />
-              </rect>
-            ))}
-          </g>
-        )}
-        {ended && saltRemains && <text x={FLASK.x} y={FLASK.y + 200} fill="#fff" fontSize="20" textAnchor="middle">정제 소금</text>}
+        {/* 가열판(Codex 그림) + 가열 불빛 */}
+        {v.power > 0 && <ellipse cx={FLASK.x} cy={FLASK.y + 150} rx={70 + v.power * 30} ry={12 + v.power * 6} fill="#ff8a3c" opacity={0.35 + v.power * 0.5} />}
+        <image href="/assets/items/hotplate.webp" x={FLASK.x - 130} y={FLASK.y + 106} width={260} height={163} />
+        {/* 가지 달린 삼각 플라스크(Codex 그림) + 안쪽 액체 */}
+        <GlassG name="flask-arm" x={FLASK.x - 133} y={FLASK.y - 180} w={267} h={330}>
+          <rect x={FLASK.x - 140} y={FLASK.y + 127 - 165 * flaskFrac} width={280} height={165 * flaskFrac + 2} fill={flaskColor} opacity="0.8" />
+          {ended && saltRemains && [[-50, 112], [-20, 108], [10, 114], [40, 110], [-5, 100], [25, 102]].map(([dx, dy], i) => (
+            <rect key={i} x={FLASK.x + dx} y={FLASK.y + dy} width="16" height="16" fill="#ffffff" transform={`rotate(${i * 17} ${FLASK.x + dx + 8} ${FLASK.y + dy + 8})`}>
+              <animate attributeName="opacity" values="0;1" dur={`${0.4 + i * 0.15}s`} fill="freeze" />
+            </rect>
+          ))}
+        </GlassG>
+        {ended && saltRemains && <text x={FLASK.x} y={FLASK.y + 205} fill="#fff" stroke="#3a2412" strokeWidth="5" paintOrder="stroke" fontSize="22" fontWeight="800" textAnchor="middle">정제 소금</text>}
         {boiling && [-25, 5, 30].map((dx) => (
           <circle key={dx} cx={FLASK.x + dx} cy={FLASK.y + 100} r="7" fill="#ffffffaa"><animate attributeName="cy" values={`${FLASK.y + 120};${FLASK.y + 20}`} dur="0.7s" repeatCount="indefinite" /></circle>
         ))}
@@ -216,13 +213,13 @@ export function Distill({ obtains, saltRemains, config, onDone }: SeparateProps)
             <animate attributeName="stroke-opacity" values="1;0.25;1" dur="1.2s" repeatCount="indefinite" />
           </circle>
         )}
-        {v.chip && <rect x={FLASK.x - 8} y={FLASK.y + 120} width="16" height="12" rx="3" fill="#c9a26b" />}
+        {v.chip && <image href="/assets/items/boiling-chips.webp" x={FLASK.x - 18} y={FLASK.y + 104} width={36} height={28} />}
         {chipPos && (
           <g transform={`translate(${chipPos.x} ${chipPos.y})`} onPointerDown={(e) => down('chip', e)} style={{ cursor: 'grab', touchAction: 'none' }}>
             <circle r="60" fill="transparent" />
-            <rect x="-20" y="-14" width="40" height="28" rx="6" fill="#c9a26b" stroke="#8a6a3a" strokeWidth="3" />
+            <image href="/assets/items/boiling-chips.webp" x="-34" y="-26" width="68" height="52" />
             {!drag && <path d="M0 -70 L0 -40 M-12 -52 L0 -38 L12 -52" stroke="#ffd27a" strokeWidth="5" fill="none" strokeLinecap="round"><animate attributeName="transform" values="translate(0 0);translate(0 14);translate(0 0)" dur="1s" repeatCount="indefinite" /></path>}
-            <text y="52" fill="#dfe8f5" fontSize="20" textAnchor="middle">끓임쪽</text>
+            <text y="56" fill="#fff" stroke="#3a2412" strokeWidth="5" paintOrder="stroke" fontSize="22" fontWeight="800" textAnchor="middle">끓임쪽</text>
           </g>
         )}
 
@@ -236,15 +233,21 @@ export function Distill({ obtains, saltRemains, config, onDone }: SeparateProps)
               <animate attributeName="stroke-dashoffset" values="0;-28" dur="0.8s" repeatCount="indefinite" />
             </path>
           )}
-          <text x={DIAL.x} y={DIAL.y + 108} fill="#dfe8f5" fontSize="20" textAnchor="middle">가열 세기</text>
+          <text x={DIAL.x + 96} y={DIAL.y + 10} fill="#fff" stroke="#3a2412" strokeWidth="5" paintOrder="stroke" fontSize="26" fontWeight="800">가열 세기</text>
         </g>
 
-        {/* 냉각기 관 */}
-        <path d={`M${FLASK.x + 34} ${FLASK.y - 110} L${FLASK.x + 200} ${FLASK.y - 110} L${RACK.x + s.tube * RACK.gap} ${RACK.y - 110}`} fill="none" stroke="#cfe3ff" strokeWidth="10" opacity="0.5" />
+        {/* 냉각기 관: 플라스크 가지 끝에서 시험관 위로 */}
+        <path d={`M${FLASK.x + 128} ${FLASK.y - 114} L${FLASK.x + 200} ${FLASK.y - 114} L${RACK.x + s.tube * RACK.gap} ${RACK.y - 110}`} fill="none" stroke="#2a3a52" strokeWidth="14" strokeLinejoin="round" strokeLinecap="round" opacity="0.55" />
+        <path d={`M${FLASK.x + 128} ${FLASK.y - 114} L${FLASK.x + 200} ${FLASK.y - 114} L${RACK.x + s.tube * RACK.gap} ${RACK.y - 110}`} fill="none" stroke="#e6f4ff" strokeWidth="9" strokeLinejoin="round" strokeLinecap="round" opacity="0.8" />
         {boiling && <circle cx={RACK.x + s.tube * RACK.gap} cy={RACK.y - 100} r="7" fill={flaskColor}><animate attributeName="cy" values={`${RACK.y - 108};${RACK.y - 40}`} dur="0.5s" repeatCount="indefinite" /></circle>}
 
-        {/* 얼음물 + 시험관대 */}
-        <rect x={RACK.x - 70} y={RACK.y - 30} width={nTubes * RACK.gap + 40} height="190" rx="16" fill={bathColor} opacity="0.55" stroke="#cfe3ff" strokeWidth="3" />
+        {/* 얼음물: 시험관을 담가 기체를 식혀 액체로 만든다 */}
+        <rect x={RACK.x - 70} y={RACK.y - 10} width={nTubes * RACK.gap + 40} height="170" rx="22" fill={bathColor} opacity="0.62" stroke="#dff1ff" strokeWidth="4" />
+        {Array.from({ length: nTubes * 2 }, (_, i) => (
+          <image key={i} href="/assets/items/ice.webp" x={RACK.x - 56 + i * (RACK.gap / 2) - 18} y={RACK.y + 96 + ((i * 37) % 30)} width={40} height={40} opacity={0.9 - warm * 0.5} transform={`rotate(${(i * 43) % 60 - 30} ${RACK.x - 56 + i * (RACK.gap / 2)} ${RACK.y + 116})`} />
+        ))}
+        <text x={RACK.x - 84} y={RACK.y + 62} fill="#fff" stroke="#3a2412" strokeWidth="5" paintOrder="stroke" fontSize="28" fontWeight="800" textAnchor="end">얼음물</text>
+        <text x={RACK.x - 84} y={RACK.y + 96} fill="#fff" stroke="#3a2412" strokeWidth="5" paintOrder="stroke" fontSize="20" fontWeight="800" textAnchor="end">기체를 식혀 액체로</text>
         {Array.from({ length: nTubes }, (_, i) => {
           const x = RACK.x + i * RACK.gap;
           const tot = s.collected[i].reduce((a, v) => a + v, 0);
@@ -254,20 +257,21 @@ export function Distill({ obtains, saltRemains, config, onDone }: SeparateProps)
           return (
             <g key={i} onPointerDown={() => !locked.current && selectTube(i)} style={{ cursor: 'pointer', touchAction: 'none' }}>
               <rect x={x - 44} y={RACK.y - 150} width="88" height="320" fill="transparent" />
-              <rect x={x - 26} y={RACK.y - 30} width="52" height="150" rx="24" fill="#ffffff14" stroke={sel ? '#ffd27a' : '#cfe3ff'} strokeWidth={sel ? 6 : 3} />
-              {tot > 0 && <rect x={x - 22} y={RACK.y + 116 - 140 * frac} width="44" height={140 * frac} rx="20" fill={obtains[dom].color} opacity="0.9" />}
-              <text x={x} y={RACK.y + 150} fill="#fff" fontSize="24" fontWeight="700" textAnchor="middle">({LABELS[i]})</text>
-              {sel && <path d={`M${x - 14} ${RACK.y - 66} L${x} ${RACK.y - 46} L${x + 14} ${RACK.y - 66}z`} fill="#ffd27a"><animate attributeName="opacity" values="1;0.3;1" dur="0.9s" repeatCount="indefinite" /></path>}
+              {sel && <rect x={x - 32} y={RACK.y - 66} width="64" height="230" rx="30" fill="#ffd27a" opacity="0.28" />}
+              <GlassG name="tube1" x={x - 22} y={RACK.y - 60} w={44} h={205}>
+                {tot > 0 && <rect x={x - 30} y={RACK.y + 132 - 140 * frac} width="60" height={140 * frac + 2} fill={obtains[dom].color} opacity="0.92" />}
+              </GlassG>
+              <text x={x} y={RACK.y + 190} fill="#fff" stroke="#3a2412" strokeWidth="5" paintOrder="stroke" fontSize="26" fontWeight="800" textAnchor="middle">({LABELS[i]})</text>
+              {sel && <path d={`M${x - 14} ${RACK.y - 84} L${x} ${RACK.y - 64} L${x + 14} ${RACK.y - 84}z`} fill="#ffd27a"><animate attributeName="opacity" values="1;0.3;1" dur="0.9s" repeatCount="indefinite" /></path>}
             </g>
           );
         })}
-        {/* 얼음 보충 */}
+        {/* 얼음 보충: 얼음물이 미지근해지면(붉게 변하면) 눌러 식힌다 */}
         <g onPointerDown={() => !locked.current && ice()} style={{ cursor: 'pointer', touchAction: 'none' }}>
-          <circle cx={ICE.x} cy={ICE.y} r="60" fill="transparent" />
-          <rect x={ICE.x - 34} y={ICE.y - 34} width="68" height="68" rx="10" fill="#d9f2ff" stroke="#8fd0f0" strokeWidth="4" transform={`rotate(12 ${ICE.x} ${ICE.y})`}>
-            {warm > 0.66 && <animate attributeName="opacity" values="1;0.35;1" dur="0.6s" repeatCount="indefinite" />}
-          </rect>
-          <text x={ICE.x} y={ICE.y + 62} fill="#dfe8f5" fontSize="20" textAnchor="middle">얼음</text>
+          <circle cx={ICE.x} cy={ICE.y} r="80" fill="transparent" />
+          <image href="/assets/items/icebucket.webp" x={ICE.x - 62} y={ICE.y - 50} width={124} height={98} style={warm > 0.66 ? { animation: 'dist-blink .6s infinite' } : undefined} />
+          <text x={ICE.x} y={ICE.y + 76} fill="#fff" stroke="#3a2412" strokeWidth="5" paintOrder="stroke" fontSize="24" fontWeight="800" textAnchor="middle">얼음 넣기</text>
+          {warm > 0.66 && <text x={ICE.x} y={ICE.y - 66} fill="#ffd27a" stroke="#3a2412" strokeWidth="5" paintOrder="stroke" fontSize="22" fontWeight="800" textAnchor="middle">물이 미지근해요!</text>}
         </g>
 
         {/* 확인 도구 */}

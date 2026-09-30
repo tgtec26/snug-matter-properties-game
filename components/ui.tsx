@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useDataStore } from '@/game/dataStore';
 
 /** 이미지가 없으면 fallback을 보여 준다 (플레이스홀더 → WebP 자동 교체) */
@@ -47,5 +47,33 @@ export function MixtureTray({ ids, known, labels }: { ids: string[]; known: stri
         );
       })}
     </div>
+  );
+}
+
+/** 활동 화면 배경 그림(bg/<name>.webp) + 글자가 읽히도록 어둡게 덮는 막. 그림이 없으면 아래 단색이 보인다 */
+export function StageBg({ name, dark = 0.55 }: { name: 'lab' | 'labheat' | 'kitchen'; dark?: number }) {
+  return (
+    <>
+      <AssetImg src={`/assets/bg/${name}.webp`} className="absolute inset-0 w-full h-full object-cover pointer-events-none" />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(rgba(10,18,28,${dark + 0.12}),rgba(10,18,28,${dark - 0.1}))` }} />
+    </>
+  );
+}
+
+/** SVG 안에서 쓰는 유리 도구: 액체(children)를 유리 안쪽 모양(-sil)으로 잘라 그린 뒤 유리 그림을 덮는다 */
+export function GlassG({ name, x, y, w, h, children, opacity = 1 }: { name: string; x: number; y: number; w: number; h: number; children?: React.ReactNode; opacity?: number }) {
+  const id = useId().replace(/:/g, '');
+  return (
+    <g>
+      {children && (
+        <>
+          <mask id={id} maskUnits="userSpaceOnUse" x={x} y={y} width={w} height={h}>
+            <image href={`/assets/items/${name}-sil.webp`} x={x} y={y} width={w} height={h} preserveAspectRatio="none" />
+          </mask>
+          <g mask={`url(#${id})`}>{children}</g>
+        </>
+      )}
+      <image href={`/assets/items/${name}.webp`} x={x} y={y} width={w} height={h} preserveAspectRatio="none" opacity={opacity} pointerEvents="none" />
+    </g>
   );
 }

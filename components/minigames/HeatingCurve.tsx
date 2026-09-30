@@ -1,4 +1,5 @@
 'use client';
+import { StageBg } from '@/components/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { InvestigateProps } from '@/game/minigameTypes';
 import { playSfx } from '@/game/audio';
@@ -137,6 +138,7 @@ export function HeatingCurve({ targets, config, onDone }: InvestigateProps) {
   return (
     <div className="absolute inset-0 pointer-events-auto overflow-hidden select-none"
       style={{ background: 'linear-gradient(160deg,#16243a,#0d1524)', wordBreak: 'keep-all' }}>
+      <StageBg name="labheat" dark={0.5} />
       <svg ref={svgRef} viewBox="0 0 1280 800" width="1280" height="800" className="absolute inset-0" style={{ touchAction: 'none' }}>
         <text x="60" y="80" fill="#e8f1ff" fontSize="36" fontWeight="700">{sub.name} {amount} mL</text>
         {/* 그래프 */}

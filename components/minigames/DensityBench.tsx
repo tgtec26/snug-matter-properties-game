@@ -206,11 +206,10 @@ export function DensityBench({ targets, config, onDone }: InvestigateProps) {
         {canFinish && <div className="mt-2 text-base" style={{ color: '#ffe082' }}>{pair ? '크기가 달라도 밀도는 같다: 양에 관계없이 일정' : '밀도는 양에 관계없이 일정'}</div>}
       </div>
 
-      {/* 저울 */}
-      <div className="absolute rounded-t-2xl" style={{ left: 430, top: 700, width: 300, height: 80, background: 'linear-gradient(#cfd8dc,#90a4ae)', border: '2px solid #607d8b' }}>
-        <div className="absolute rounded font-mono text-2xl text-right px-3" style={{ left: 50, top: 14, width: 200, height: 44, lineHeight: '44px', background: '#102a1a', color: '#7CFF9A' }}>{massShown.toFixed(1)} g</div>
-      </div>
-      <div className="absolute rounded-full" style={{ left: BAL.x0 + 10, top: BAL.floor - 2, width: BAL.x1 - BAL.x0 - 20, height: 16, background: '#b0bec5', border: '2px solid #607d8b' }} />
+      {/* 저울 (Codex 그림) + 질량 표시 */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/assets/items/scale.webp" alt="" draggable={false} className="absolute pointer-events-none" style={{ left: 405, top: 580, width: 350, filter: 'drop-shadow(0 10px 10px rgba(0,0,0,.45))' }} />
+      <div className="absolute font-mono text-right pointer-events-none" style={{ left: 468, top: 722, width: 186, height: 36, lineHeight: '36px', fontSize: 26, color: '#7CFF9A', textShadow: '0 0 8px rgba(124,255,154,.7)' }}>{massShown.toFixed(1)} g</div>
       <div className="absolute rounded-lg" style={{ left: BAL.x0, top: BAL.y0, width: BAL.x1 - BAL.x0, height: BAL.y1 - BAL.y0 - 30, border: '2px dashed #ffe082', opacity: showStep === 'balance' && drag ? 1 : 0.25, animation: showStep === 'balance' ? 'db-pulse 1.2s infinite' : undefined }} />
 
       {/* 조각 보관대 */}

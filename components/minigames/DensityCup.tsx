@@ -1,5 +1,6 @@
 'use client';
 
+import { StageBg } from '@/components/ui';
 import { useEffect, useRef, useState } from 'react';
 import type { InvestigateProps } from '@/game/minigameTypes';
 import { playSfx } from '@/game/audio';
@@ -183,6 +184,7 @@ export function DensityCup({ targets, config, onDone }: InvestigateProps) {
   return (
     <div ref={rootRef} className="absolute inset-0 pointer-events-auto select-none overflow-hidden"
       style={{ background: 'linear-gradient(160deg,#3b2f4f,#1c1830)', touchAction: 'none', color: '#fff' }}>
+      <StageBg name="lab" dark={0.5} />
       <style>{`@keyframes dc-pulse{0%,100%{opacity:.3}50%{opacity:1}}@keyframes dc-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(16px)}}`}</style>
 
       <div className="absolute w-full text-center text-xl font-bold" style={{ top: 40, minHeight: 32, color: '#ffe082' }}>{msg}</div>

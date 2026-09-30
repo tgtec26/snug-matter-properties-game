@@ -1,5 +1,6 @@
 'use client';
 
+import { StageBg } from '@/components/ui';
 import { useEffect, useRef, useState } from 'react';
 import type { InvestigateProps } from '@/game/minigameTypes';
 import type { Substance } from '@/game/types';
@@ -216,6 +217,7 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
   return (
     <div data-stage className="absolute inset-0 pointer-events-auto select-none overflow-hidden text-white"
       style={{ background: 'linear-gradient(160deg,#1c2b45,#101a2e)', touchAction: 'none' }}>
+      <StageBg name="lab" dark={0.5} />
       <style>{`@keyframes sbspin{to{transform:rotate(360deg)}}@keyframes sbnudge{0%,100%{transform:translateX(-10px)}50%{transform:translateX(10px)}}@keyframes sbpulse{0%,100%{opacity:.4}50%{opacity:1}}`}</style>
 
       {phase === 'work' && (
