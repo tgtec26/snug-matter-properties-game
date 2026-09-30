@@ -6,6 +6,8 @@ import { useDataStore } from '@/game/dataStore';
 import { isUnlocked } from '@/game/rules';
 import { loadDex } from '@/game/dex';
 import { Backdrop, SubstanceIcon } from '@/components/ui';
+import { CardFace } from '@/components/CardFace';
+import { CollectionBook } from '@/components/CollectionBook';
 
 const KIND_LABEL = { tutorial: '연습', required: '필수', final: '최종', optional: '선택' } as const;
 
@@ -51,30 +53,17 @@ function DexPopup({ onClose }: { onClose: () => void }) {
   const [dex] = useState(() => loadDex());
   const [sel, setSel] = useState<string | null>(null);
   const s = substances.find(x => x.id === sel);
-  const list = substances.filter(x => !x.reference && x.id !== 'saltwater');
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/70" onClick={onClose}>
-      <div className="w-[1000px] rounded-3xl bg-white text-slate-900 px-8 py-6 shadow-2xl flex gap-6" onClick={e => e.stopPropagation()}>
-        <div className="w-[520px]">
-          <div className="text-[24px] font-black mb-3">물질 도감 {dex.known.filter(k => list.some(l => l.id === k)).length} / {list.length}</div>
-          <div className="grid grid-cols-4 gap-2">
-            {list.map(x => {
-              const known = dex.known.includes(x.id);
-              return (
-                <button key={x.id} disabled={!known} onClick={() => setSel(x.id)}
-                  className={`rounded-xl border-2 py-2 flex flex-col items-center gap-1 ${sel === x.id ? 'border-amber-500 bg-amber-50' : 'border-slate-200'} ${known ? '' : 'opacity-40'}`}>
-                  {known ? <SubstanceIcon id={x.id} size={48} /> : <div className="w-12 h-12 rounded-xl bg-slate-200" />}
-                  <span className="text-[15px] font-bold">{known ? x.name : '?'}</span>
-                </button>
-              );
-            })}
-          </div>
+    <div className="absolute inset-0 z-40" onClick={() => (sel ? setSel(null) : onClose())}>
+      <CollectionBook filled={dex.known} stamps={dex.stamps} onPick={setSel} />
+      {!sel && <div className="absolute inset-x-0 top-[8px] flex justify-center pointer-events-none"><div className="rounded-xl bg-black/65 px-6 py-1 text-[22px] font-bold text-white">물질 카드 컬렉션</div></div>}
+      {sel && s && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: 'rgba(10,8,4,.7)' }}>
+          <CardFace id={s.id} w={320} stamp={dex.stamps[s.id]} />
+          <div className="rounded-xl bg-black/60 px-6 py-2 text-[22px] font-bold text-amber-100">{s.card.example}</div>
         </div>
-        <div className="flex-1 min-h-[300px]">
-          {s ? <SubstanceCard id={s.id} stamp={dex.stamps[s.id]} /> : <div className="text-slate-400 text-[18px] mt-20 text-center">물질을 눌러 보세요</div>}
-          <div className="mt-6 text-right"><button onClick={onClose} className="rounded-xl bg-amber-500 px-6 py-2 text-[18px] font-bold">닫기</button></div>
-        </div>
-      </div>
+      )}
+      <button onClick={e => { e.stopPropagation(); onClose(); }} className="absolute right-6 bottom-5 rounded-xl bg-amber-500 px-8 py-3 text-[22px] font-bold text-black">닫기</button>
     </div>
   );
 }

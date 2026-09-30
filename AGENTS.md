@@ -28,3 +28,13 @@
 - **재결정**: 고체 혼합물을 용매에 **모두 녹인 뒤 온도를 낮추거나 용매를 증발**시켜 순수한 고체를 얻음. 용해도 차가 **큰** 물질이 **석출**, 거름 장치로 거름 (37쪽).
 - **증류**: 끓는점 차. 가열해 나온 기체를 냉각. **끓는점 낮은 것이 먼저**. 온도 일정 구간이 성분 수만큼. 끓임쪽. 한 번으로는 순수하기 어려움 (38~40쪽).
 - **용어**: 비중 X(밀도), 여과 X(거름), 부력 X("밀도 차로 뜨고 가라앉는다"), 농도·크로마토그래피·승화 분리·증기 압력 X(교과서 없음). "밀도 차·용해도 차·끓는점 차", "분별 깔때기", "석출", "재결정", "증류", "끓임쪽". 교과서에 없는 물질·수치는 **지어내지 않는다**.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

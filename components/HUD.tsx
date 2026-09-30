@@ -18,7 +18,7 @@ export function HUD() {
     const t = setInterval(() => { setNow(Date.now()); setKnown(loadDex().known.length); }, 1000);
     return () => clearInterval(t);
   }, []);
-  if (s.phase === 'title' || s.phase === 'summary' || s.phase === 'investigate' || s.phase === 'choose' || s.phase === 'separate') return null;
+  if (s.phase === 'title' || s.phase === 'summary' || s.phase === 'investigate' || s.phase === 'choose' || s.phase === 'result' || s.phase === 'separate') return null;
   const m = missions.find(x => x.id === s.missionId);
   const stars = Object.values(s.records).reduce((a, r) => a + r.stars, 0);
   const total = substances.filter(x => !x.reference && x.id !== 'saltwater').length;
