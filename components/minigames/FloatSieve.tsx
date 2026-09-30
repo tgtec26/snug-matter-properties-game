@@ -22,7 +22,7 @@ interface G extends Grain { x: number; y: number; vx: number; vy: number; st: St
 
 const build = (grains: Grain[]): G[] =>
   grains.map((gr, i) => ({ ...gr, x: 0, y: 0, vx: 0, vy: 0, st: 'bowl', ox: 0, oy: 0, slot: -1,
-    lx: BOWL_FLOOR.x - 62 + (i % 6) * 25, ly: BOWL_FLOOR.y - 10 + Math.floor(i / 6) * 15 + ((i * 7) % 5) }));
+    lx: BOWL_FLOOR.x - 62 + (i % 6) * 25, ly: BOWL_FLOOR.y - 30 + Math.floor(i / 6) * 13 + ((i * 7) % 5) }));
 
 export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) {
   const cfg = sieveCfg(config);
