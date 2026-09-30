@@ -1,0 +1,50 @@
+{
+ "intro": [
+  "어서 와, 견습생! 이 공방에는 온갖 물질이 섞여 들어온단다.",
+  "물질의 특성은 물질의 신분증이야. 신분증이 다르면 섞여 있어도 가를 수 있지!"
+ ],
+ "npcs": {
+  "master": {
+   "name": "공방 주인",
+   "color": "#8a5a2b"
+  },
+  "scrap": {
+   "name": "고물상",
+   "color": "#6b7a8f"
+  },
+  "cook": {
+   "name": "요리사",
+   "color": "#d97b66"
+  },
+  "researcher": {
+   "name": "연구원",
+   "color": "#5b8fd9"
+  },
+  "brewer": {
+   "name": "양조장 장인",
+   "color": "#a06a3a"
+  },
+  "farmer": {
+   "name": "농부",
+   "color": "#7aa04a"
+  }
+ },
+ "reasons": {
+  "solid-needs-medium": "둘 다 가라앉거나 둘 다 떠요. 밀도가 중간인 액체가 필요해요.",
+  "miscible": "두 액체가 서로 잘 섞여 층이 생기지 않아요.",
+  "no-layer-solid": "고체는 층을 이루지 않아요.",
+  "solubility-liquid": "액체는 결정으로 석출되지 않아요.",
+  "solubility-similar": "둘 다 온도에 따라 용해도가 거의 변하지 않아요.",
+  "solubility-single": "물에 녹는 고체가 한 가지뿐이라 가를 것이 없어요.",
+  "boiling-layer": "기름이 층을 이루고 있어요. 먼저 밀도 차로 걷어 내요.",
+  "boiling-solid": "고체 두 가지뿐이라 기화하지 않아요.",
+  "boiling-single": "끓는점이 다른 액체가 둘 이상 있어야 해요.",
+  "density-none": "밀도 차로 가를 것이 없어요.",
+  "not-now": "지금은 다른 방법을 먼저 써야 해요."
+ },
+ "hints": {
+  "density": "밀도가 다르다.",
+  "solubility": "용해도 곡선이 다르다.",
+  "boiling": "끓는점이 다르다."
+ }
+}

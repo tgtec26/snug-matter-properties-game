@@ -1,0 +1,350 @@
+[
+ {
+  "id": "water",
+  "name": "물",
+  "state": "liquid",
+  "color": "#5aa9e6",
+  "density": 1.0,
+  "meltingPoint": 0,
+  "boilingPoint": 100,
+  "solubility": null,
+  "card": {
+   "example": "생활 어디에나 있는 용매",
+   "page": "18, 26쪽"
+  },
+  "misciblesWithWater": true
+ },
+ {
+  "id": "ethanol",
+  "name": "에탄올",
+  "state": "liquid",
+  "color": "#9ad7f2",
+  "density": 0.79,
+  "meltingPoint": null,
+  "boilingPoint": 78,
+  "solubility": null,
+  "card": {
+   "example": "소독용 에탄올, 술의 성분",
+   "page": "18, 27쪽"
+  },
+  "misciblesWithWater": true
+ },
+ {
+  "id": "cooking-oil",
+  "name": "식용유",
+  "state": "liquid",
+  "color": "#f0c93a",
+  "density": null,
+  "meltingPoint": null,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "사골국 위에 뜬 기름",
+   "page": "18, 35쪽"
+  },
+  "densityNote": "물보다 작고 에탄올보다 크다",
+  "misciblesWithWater": false
+ },
+ {
+  "id": "olive-oil",
+  "name": "올리브유",
+  "state": "liquid",
+  "color": "#a9b73a",
+  "density": null,
+  "meltingPoint": null,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "간장 위에 뜬 올리브유",
+   "page": "34, 42쪽"
+  },
+  "densityNote": "물보다 작고 에탄올보다 크다",
+  "misciblesWithWater": false
+ },
+ {
+  "id": "iron",
+  "name": "철",
+  "state": "solid",
+  "color": "#7b7f86",
+  "density": 7.87,
+  "meltingPoint": 1538,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "조리 기구, 쇠못",
+   "page": "16, 25쪽"
+  },
+  "dissolvesInWater": false
+ },
+ {
+  "id": "aluminum",
+  "name": "알루미늄",
+  "state": "solid",
+  "color": "#c9d1d8",
+  "density": 2.7,
+  "meltingPoint": 660,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "알루미늄 포일, 캔",
+   "page": "16, 25쪽"
+  },
+  "dissolvesInWater": false
+ },
+ {
+  "id": "kno3",
+  "name": "질산 칼륨",
+  "state": "solid",
+  "color": "#f4f1ea",
+  "density": null,
+  "meltingPoint": null,
+  "boilingPoint": null,
+  "solubility": [
+   {
+    "t": 0,
+    "g": 13
+   },
+   {
+    "t": 20,
+    "g": 32
+   },
+   {
+    "t": 40,
+    "g": 64
+   },
+   {
+    "t": 60,
+    "g": 110
+   },
+   {
+    "t": 80,
+    "g": 169
+   }
+  ],
+  "card": {
+   "example": "온도가 오르면 용해도가 크게 늘어나요",
+   "page": "22, 37쪽"
+  },
+  "dissolvesInWater": true
+ },
+ {
+  "id": "nacl",
+  "name": "염화 나트륨",
+  "state": "solid",
+  "color": "#e8ecef",
+  "density": null,
+  "meltingPoint": 802,
+  "boilingPoint": 1465,
+  "solubility": [
+   {
+    "t": 0,
+    "g": 35
+   },
+   {
+    "t": 20,
+    "g": 36
+   },
+   {
+    "t": 40,
+    "g": 36
+   },
+   {
+    "t": 60,
+    "g": 37
+   },
+   {
+    "t": 80,
+    "g": 38
+   }
+  ],
+  "card": {
+   "example": "소금. 온도가 올라도 용해도가 거의 그대로예요",
+   "page": "22, 37쪽"
+  },
+  "dissolvesInWater": true
+ },
+ {
+  "id": "rice",
+  "name": "볍씨",
+  "state": "solid",
+  "color": "#d9b45a",
+  "density": null,
+  "meltingPoint": null,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "속이 찬 볍씨는 소금물에 가라앉아요",
+   "page": "34쪽"
+  },
+  "dissolvesInWater": false,
+  "floatsInSaltwater": false
+ },
+ {
+  "id": "husk",
+  "name": "쭉정이",
+  "state": "solid",
+  "color": "#c9a86a",
+  "density": null,
+  "meltingPoint": null,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "속이 빈 쭉정이는 소금물에 떠요",
+   "page": "34쪽"
+  },
+  "dissolvesInWater": false,
+  "floatsInSaltwater": true
+ },
+ {
+  "id": "saltwater",
+  "name": "소금물",
+  "state": "liquid",
+  "color": "#7fbfd8",
+  "density": null,
+  "meltingPoint": null,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "볍씨 고르기에 쓰는 용액",
+   "page": "34쪽"
+  },
+  "densityNote": "볍씨와 쭉정이의 중간 밀도",
+  "misciblesWithWater": true
+ },
+ {
+  "id": "gold",
+  "name": "금",
+  "state": "solid",
+  "color": "#e2b93b",
+  "density": 19.32,
+  "meltingPoint": 1064,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "",
+   "page": "18, 33쪽"
+  },
+  "dissolvesInWater": false,
+  "reference": true
+ },
+ {
+  "id": "mercury",
+  "name": "수은",
+  "state": "liquid",
+  "color": "#b9bec4",
+  "density": 13.6,
+  "meltingPoint": null,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "상온에서 액체인 금속, 독성",
+   "page": "18, 28쪽"
+  },
+  "reference": true
+ },
+ {
+  "id": "gallium",
+  "name": "갈륨",
+  "state": "solid",
+  "color": "#aeb6c0",
+  "density": null,
+  "meltingPoint": 30,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "손바닥에서 녹아요",
+   "page": "25, 28쪽"
+  },
+  "reference": true
+ },
+ {
+  "id": "nickel",
+  "name": "니켈",
+  "state": "solid",
+  "color": "#9aa1a8",
+  "density": null,
+  "meltingPoint": 1455,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "비행기 엔진",
+   "page": "25쪽"
+  },
+  "reference": true
+ },
+ {
+  "id": "oxygen",
+  "name": "산소",
+  "state": "gas",
+  "color": "#cfe8ff",
+  "density": null,
+  "meltingPoint": -219,
+  "boilingPoint": -183,
+  "solubility": null,
+  "card": {
+   "example": "",
+   "page": "18, 25쪽"
+  },
+  "reference": true
+ },
+ {
+  "id": "nitrogen",
+  "name": "질소",
+  "state": "gas",
+  "color": "#cfe8ff",
+  "density": 0.0013,
+  "meltingPoint": -210,
+  "boilingPoint": -196,
+  "solubility": null,
+  "card": {
+   "example": "액체 질소는 냉각제",
+   "page": "18, 25쪽"
+  },
+  "reference": true
+ },
+ {
+  "id": "helium",
+  "name": "헬륨",
+  "state": "gas",
+  "color": "#ffe6f0",
+  "density": 0.00018,
+  "meltingPoint": null,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "헬륨 풍선",
+   "page": "18쪽"
+  },
+  "reference": true
+ },
+ {
+  "id": "co2",
+  "name": "이산화 탄소",
+  "state": "gas",
+  "color": "#dddddd",
+  "density": 0.002,
+  "meltingPoint": null,
+  "boilingPoint": null,
+  "solubility": null,
+  "card": {
+   "example": "탄산음료",
+   "page": "18, 23쪽"
+  },
+  "reference": true
+ },
+ {
+  "id": "butane",
+  "name": "뷰테인",
+  "state": "gas",
+  "color": "#dddddd",
+  "density": null,
+  "meltingPoint": null,
+  "boilingPoint": -0.5,
+  "solubility": null,
+  "card": {
+   "example": "휴대용 가스",
+   "page": "26쪽"
+  },
+  "reference": true
+ }
+]

@@ -1,14 +1,19 @@
 'use client';
 
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { UIOverlay } from '@/components/UIOverlay';
+import { useDataStore } from '@/game/dataStore';
+import { useGameStore } from '@/game/store';
 import { GAME_WIDTH, GAME_HEIGHT } from '@/game/config';
 
-/**
- * 무대 1280×800을 뷰포트에 letterbox. 암석 순환 여행과 같은 구조.
- * 게임 본체(Phaser 캔버스 + React 오버레이)는 계획서 태스크에서 채운다.
- */
+/** 무대 1280×800을 뷰포트에 letterbox (transform scale). */
 export default function Home() {
   const [size, setSize] = useState({ w: GAME_WIDTH, h: GAME_HEIGHT, scale: 1 });
+  const loaded = useDataStore(s => s.loaded);
+  const error = useDataStore(s => s.error);
+  const load = useDataStore(s => s.load);
+
+  useEffect(() => { load().then(() => useGameStore.getState().hydrate()); }, [load]);
 
   useLayoutEffect(() => {
     const update = () => {
@@ -21,16 +26,14 @@ export default function Home() {
     return () => { window.removeEventListener('resize', update); window.removeEventListener('orientationchange', update); };
   }, []);
 
+  if (!loaded) return <main className="fixed inset-0 bg-black text-white flex items-center justify-center">불러오는 중…</main>;
+  if (error) return <main className="fixed inset-0 bg-black text-red-300 flex items-center justify-center p-8 text-center">데이터를 불러오지 못했습니다.<br />{error}</main>;
+
   return (
     <main className="fixed inset-0 overflow-hidden bg-black flex items-center justify-center">
       <div className="relative bg-black overflow-hidden" style={{ width: size.w, height: size.h }}>
-        <div
-          className="absolute top-0 left-0 flex flex-col items-center justify-center text-center gap-4"
-          style={{ width: GAME_WIDTH, height: GAME_HEIGHT, transform: `scale(${size.scale})`, transformOrigin: 'top left' }}
-        >
-          <h1 className="text-5xl font-bold">물질 분리 공방 (가제)</h1>
-          <p className="text-xl text-neutral-300">프로젝트 뼈대 — 게임 본체는 아직 없음</p>
-          <p className="text-sm text-neutral-500">무대 1280×800 · 스펙은 docs/superpowers/specs</p>
+        <div className="absolute top-0 left-0" style={{ width: GAME_WIDTH, height: GAME_HEIGHT, transform: `scale(${size.scale})`, transformOrigin: 'top left' }}>
+          <UIOverlay />
         </div>
       </div>
     </main>

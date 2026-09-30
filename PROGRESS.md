@@ -14,3 +14,10 @@
 1. 계획서 `docs/superpowers/plans/2026-09-30-matter-properties-mvp.md` 작성 (스펙 9장 코드 구성 기준, 태스크별 체크박스).
 2. 암석 순환에서 공통 부품 이식 (AGENTS.md "참고 구현" 목록) → `rules.ts`(4-3 판정표)와 테스트부터.
 3. Vercel 대시보드에서 Import → main 푸시 자동 배포.
+
+## 2026-09-30 MVP 1차 (자동 진행)
+- 구조 결정: 미니게임 8개 전부 **React 오버레이(SVG·DOM)** 로 구현 (Phaser 씬 없음). Phaser 의존성은 남아 있으나 아직 쓰지 않음.
+- 핵심: `game/rules.ts`(canSeparate·의뢰 잠금·별점), `game/store.ts`(단계 전이·저장), `game/dex.ts`(누적 도감), `public/data/*.json`(물질·의뢰·대화·퀴즈). `tests/rules.test.ts`, `tests/store.test.ts`.
+- 미니게임 `components/minigames/*` (조사 4: DensityBench·DensityCup·SolubilityBottle·HeatingCurve / 분리 4: Funnel·Recrystal·Distill·FloatSieve), 순수 판정은 `game/minigames/*.ts`+테스트. 개발용 단독 페이지 `app/dev/<Name>`.
+- 그림: Codex로 배경 2·NPC 시트·아이템 시트 생성 → `docs/assets-source/`, 게임용 `public/assets/{bg,npc,items}`. 목록은 `docs/art-todo.md`.
+- 미구현: `/admin` 편집기, 사례 카드 9장·자료실, 효과음 추가, 선택 의뢰 외 추가 의뢰.
