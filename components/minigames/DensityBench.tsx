@@ -188,7 +188,7 @@ export function DensityBench({ targets, config, onDone }: InvestigateProps) {
         {pieces.map(p => {
           const r = recs.find(x => x.id === p.id);
           return (
-            <div key={p.id} className="flex items-center gap-3 mb-2 rounded-md px-3" style={{ height: 44, background: 'rgba(10,20,30,.7)', border: '1px solid rgba(255,255,255,.18)' }}>
+            <div key={p.id} className="flex items-center gap-3 mb-2 rounded-md px-3" style={{ height: 44, background: 'rgba(14,28,42,.95)', border: '1px solid rgba(255,255,255,.35)' }}>
               <span className="font-bold" style={{ width: 22 }}>{p.label}</span>
               {r ? (<>
                 <span className="rounded-full" style={{ width: 16, height: 16, background: r.color }} />
@@ -201,7 +201,7 @@ export function DensityBench({ targets, config, onDone }: InvestigateProps) {
       </div>
 
       {/* 계산 패널 */}
-      <div className="absolute rounded-lg px-5 py-3 text-center" style={{ left: 440, top: 50, width: 400, minHeight: 120, background: 'rgba(0,0,0,.35)', border: '1px solid rgba(255,255,255,.2)' }}>
+      <div className="absolute rounded-lg px-5 py-3 text-center" style={{ left: 440, top: 50, width: 400, minHeight: 120, background: 'rgba(14,28,42,.95)', border: '1px solid rgba(255,255,255,.35)' }}>
         <div className="text-lg font-bold" style={{ minHeight: 56 }}>{msg || (active ? `조각 ${active.label}` : '조각을 저울로')}</div>
         {canFinish && <div className="mt-2 text-base" style={{ color: '#ffe082' }}>{pair ? '크기가 달라도 밀도는 같다: 양에 관계없이 일정' : '밀도는 양에 관계없이 일정'}</div>}
       </div>
@@ -214,11 +214,11 @@ export function DensityBench({ targets, config, onDone }: InvestigateProps) {
       <div className="absolute rounded-lg" style={{ left: BAL.x0, top: BAL.y0, width: BAL.x1 - BAL.x0, height: BAL.y1 - BAL.y0 - 30, border: '2px dashed #ffe082', opacity: showStep === 'balance' && drag ? 1 : 0.25, animation: showStep === 'balance' ? 'db-pulse 1.2s infinite' : undefined }} />
 
       {/* 조각 보관대 */}
-      <div className="absolute rounded-lg" style={{ left: TRAY.x0, top: TRAY.y0 + 20, width: TRAY.x1 - TRAY.x0, height: 130, border: '2px solid rgba(255,255,255,.2)', background: 'rgba(255,255,255,.05)' }} />
+      <div className="absolute rounded-lg" style={{ left: TRAY.x0, top: TRAY.y0 + 20, width: TRAY.x1 - TRAY.x0, height: 130, border: '2px solid rgba(255,255,255,.4)', background: 'rgba(14,28,42,.88)' }} />
 
       {/* 눈금실린더 */}
-      <div className="absolute" style={{ left: TUBE.x0, top: TUBE.top, width: TUBE.x1 - TUBE.x0, height: TUBE.bottom - TUBE.top, border: '3px solid rgba(220,240,255,.85)', borderTop: 'none', borderRadius: '0 0 14px 14px', background: 'rgba(180,220,255,.08)' }}>
-        <div className="absolute left-0 right-0 bottom-0" style={{ height: (level - 0) * PX_PER_ML, background: 'linear-gradient(rgba(90,169,230,.75),rgba(60,130,200,.9))', transition: 'height .7s ease', borderRadius: '0 0 10px 10px' }}>
+      <div className="absolute" style={{ left: TUBE.x0, top: TUBE.top, width: TUBE.x1 - TUBE.x0, height: TUBE.bottom - TUBE.top, border: '3px solid rgba(220,240,255,.85)', borderTop: 'none', borderRadius: '0 0 40px 40px', background: 'rgba(14,28,42,.7)' }}>
+        <div className="absolute left-0 right-0 bottom-0" style={{ height: (level - 0) * PX_PER_ML, background: 'linear-gradient(rgba(90,169,230,.75),rgba(60,130,200,.9))', transition: 'height .7s ease', borderRadius: '0 0 37px 37px' }}>
           <svg width={TUBE.x1 - TUBE.x0 - 6} height="14" style={{ position: 'absolute', top: -7, left: 0 }}>
             <path d={`M0 2 Q${(TUBE.x1 - TUBE.x0 - 6) / 2} 16 ${TUBE.x1 - TUBE.x0 - 6} 2`} fill="none" stroke="rgba(255,255,255,.9)" strokeWidth="2" />
           </svg>
@@ -245,7 +245,7 @@ export function DensityBench({ targets, config, onDone }: InvestigateProps) {
 
       {/* 읽기 / 다음 */}
       <button onClick={() => now() >= lockRef.current && read()} disabled={!active || stages[active.id] !== 'water'}
-        className="absolute rounded-lg font-bold text-xl" style={{ left: 1010, top: 665, width: 200, height: 56, background: active && stages[active.id] === 'water' ? '#00897b' : '#455a64', opacity: active && stages[active.id] === 'water' ? 1 : 0.5, border: '2px solid rgba(255,255,255,.6)' }}>눈금 읽기</button>
+        className="absolute rounded-lg font-bold text-xl" style={{ left: 1010, top: 665, width: 200, height: 56, background: active && stages[active.id] === 'water' ? '#00897b' : '#455a64', opacity: active && stages[active.id] === 'water' ? 1 : 0.8, border: '2px solid rgba(255,255,255,.6)' }}>눈금 읽기</button>
       {showNext && (
         <button onClick={finish} className="absolute rounded-lg font-bold text-xl" style={{ left: 1010, top: 735, width: 200, height: 52, background: '#f9a825', color: '#222', border: '2px solid #fff' }}>다음</button>
       )}
