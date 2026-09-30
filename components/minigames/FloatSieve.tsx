@@ -247,7 +247,7 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
         </div>
       )}
       {s.started && !s.result && (
-        <button type="button" className="absolute bottom-4 right-6 rounded-xl bg-[#3d5a80] px-6 py-2 text-[22px] font-bold text-white"
+        <button type="button" className="absolute bottom-4 left-6 rounded-xl bg-[#3d5a80] px-6 py-2 text-[22px] font-bold text-white"
           onClick={(e) => { if (!locked()) finish(); e.currentTarget.blur(); }}>다 걷었어요</button>
       )}
       <div className="absolute left-6 top-[62px] max-w-[560px] text-[22px] font-bold text-[#22303c] pointer-events-none">{hint}</div>
