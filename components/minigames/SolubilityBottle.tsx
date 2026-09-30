@@ -253,6 +253,10 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
             <div style={{ position: 'absolute', left: (dipped ? IN_BEAKER.x : HOME.x) - 10, top: HOME.y - 10, width: HOME.w + 20, height: HOME.h + 20, border: '4px dashed #fde047', borderRadius: 24, animation: 'sbpulse .8s infinite' }} />
           )}
 
+          {/* 자석 젓개 판: 유리 그릇 뒤(아래)에 먼저 그려 그릇이 판 위에 올려진 모양이 되게 한다 */}
+          <Pad x={HOME.x - 20} y={HOME.y + HOME.h - 22} onRub={stirOnce} hint={bottle.pending > 0} />
+          <Pad x={BEAKER.x + 20} y={BEAKER.y + BEAKER.h - 22} onRub={stirOnce} hint={dipped && bottle.pending > 0} />
+
           {/* 60 ℃ 물 비커 */}
           <div style={{ position: 'absolute', left: BEAKER.x, top: BEAKER.y, width: BEAKER.w, height: BEAKER.h }}>
             <svg width={BEAKER.w} height={BEAKER.h} viewBox="0 0 260 290" style={{ overflow: 'visible' }}>
@@ -285,10 +289,6 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
           <div className="absolute text-center text-xl font-bold rounded-xl px-3 py-1 whitespace-nowrap" style={{ left: HOME.x - 60, top: HOME.y - 52, width: HOME.w + 120, background: 'rgba(14,28,42,.92)', border: '1px solid rgba(255,255,255,.35)' }}>
             <span className="text-slate-300">넣은 양</span> {total.toFixed(1)} g · <span className="text-slate-300">녹은 양</span> {bottle.dissolved.toFixed(1)} g
           </div>
-
-          {/* 자석 젓개 판 (병 아래, 비커 아래) */}
-          <Pad x={HOME.x - 20} y={HOME.y + HOME.h + 6} onRub={stirOnce} hint={bottle.pending > 0} />
-          <Pad x={BEAKER.x + 20} y={BEAKER.y + BEAKER.h + 6} onRub={stirOnce} hint={dipped && bottle.pending > 0} />
 
           <div className="absolute bottom-3 left-8 text-base text-slate-400">Space 넣기 · S 젓기 · Enter 담그기</div>
         </>

@@ -105,7 +105,6 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
   const announced = useRef(false);
   const lockUntil = useRef(0);
   const doneRef = useRef(false);
-  const rodLast = useRef<{ x: number; y: number } | null>(null);
   const cfgRef = useRef(cfg);
   const subsRef = useRef(subs);
 
@@ -236,25 +235,17 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
       </div>
       {phase === 'heat' && !heated && <Arrow x={280} y={660} rot={0} />}
 
-      {/* 유리 막대 (문지르기) */}
+      {/* 유리 막대 (누르면 젓기) */}
       {phase === 'heat' && (
         <div
-          style={{ position: 'absolute', left: 390, top: 340, width: 110, height: 280, touchAction: 'none', cursor: 'grab' }}
-          onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); rodLast.current = stagePt(e); }}
-          onPointerMove={e => {
-            if (!rodLast.current) return;
-            const p = stagePt(e);
-            const d = Math.hypot(p.x - rodLast.current.x, p.y - rodLast.current.y);
-            stirLevel.current = Math.min(1, stirLevel.current + d / 500);
-            setRod(Math.max(-14, Math.min(14, (p.x - rodLast.current.x) * 2 + (Math.random() - 0.5) * 6)));
-            rodLast.current = p;
-          }}
-          onPointerUp={() => { rodLast.current = null; setRod(0); }} onPointerCancel={() => { rodLast.current = null; setRod(0); }} onLostPointerCapture={() => { rodLast.current = null; setRod(0); }}
+          style={{ position: 'absolute', left: 390, top: 340, width: 110, height: 280, touchAction: 'manipulation', cursor: 'pointer' }}
+          onClick={() => { if (locked()) return; stirLevel.current = Math.min(1, stirLevel.current + 0.5); setRod(12); setTimeout(() => setRod(-12), 120); setTimeout(() => setRod(0), 240); }}
         >
           <svg width="110" height="280" viewBox="0 0 110 280">
             <rect x="46" y="20" width="18" height="250" rx="9" fill="#dbeafe" stroke="#93c5fd" strokeWidth="3" />
             <path d="M20 150 Q55 110 90 150" fill="none" stroke="#fde047" strokeWidth="4" strokeLinecap="round" opacity={solidLeft(sim, 0) + solidLeft(sim, 1) > 0.01 && heated ? 0.9 : 0} />
           </svg>
+        {heated && solidLeft(sim, 0) + solidLeft(sim, 1) > 0.01 && <div className="absolute left-1/2 -translate-x-1/2 -top-9 whitespace-nowrap rounded-lg bg-black/70 px-3 py-0.5 text-[20px] font-bold text-amber-200">눌러서 젓기</div>}
         </div>
       )}
 
