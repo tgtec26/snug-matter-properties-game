@@ -208,7 +208,7 @@ export function Funnel({ mixture, obtains, config, onDone }: SeparateProps) {
     return (
       <g style={{ transform: `translate(${x}px, ${y}px) scale(${sc})`, transition: trans ? 'transform .5s ease' : 'none' }}>
         <GlassG name="beaker-l" x={-58} y={-116} w={116} h={140}>
-          {fills.map((f, i) => { acc += f.h; return <rect key={i} x={-60} y={-acc - 4} width={120} height={f.h + 0.5} fill={f.color} opacity={0.92} />; })}
+          {fills.map((f, i) => { acc += f.h; return <rect key={i} x={-60} y={16 - acc} width={120} height={f.h + 0.5} fill={f.color} opacity={0.92} />; })}
         </GlassG>
         <text x={0} y={52} textAnchor="middle" fontSize={24} fontWeight={800} fill="#fff" stroke="#3a2412" strokeWidth={5} paintOrder="stroke">{label}</text>
       </g>
