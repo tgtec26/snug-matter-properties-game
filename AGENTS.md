@@ -3,7 +3,7 @@
 > AI 코딩 에이전트가 이 저장소에서 작업할 때 따라야 할 지침. 상위 `../../AGENTS.md`(워크스페이스 공통 규칙)가 있으면 병합해 적용한다.
 
 ## 전역 개발 지침
-이 시리즈의 모든 게임은 `tgtec26/snug-game-principles`의 `CLAUDE.md`(수업용 과학 게임 대원칙)를 따른다. 클라우드 세션에서는 `add_repo`로 그 저장소를 붙여 읽는다. 완료 전에는 그 10번 점검표로 스스로 검사한다. 이 저장소의 대조 결과와 남은 일은 [docs/principles-check.md](docs/principles-check.md), 레퍼런스 게임 조사는 [docs/reference-games.md](docs/reference-games.md).
+이 시리즈의 모든 게임은 `tgtec26/snug-game-principles`를 따른다. 작업을 시작하기 전에 그 저장소의 `CLAUDE.md`(수업용 과학 게임 대원칙)와 `KNOWHOW.md`의 "0. 시작 체크리스트"를 읽는다. 클라우드 세션에서는 `add_repo`로 그 저장소를 붙여 읽고, 로컬에서는 clone해 둔 폴더에서 `git pull` 후 읽는다. 완료 전에는 `CLAUDE.md` 10번 점검표로 스스로 검사한다. 작업 중 새 함정을 알게 되면 `KNOWHOW.md`에 항목으로 추가하고(쓸 수 없으면 이 저장소의 `docs/knowhow-pending.md`에 같은 형식으로 적는다), 추가한 항목의 번호·제목을 그 턴의 보고에 적는다(KNOWHOW P12). 이 저장소의 대조 결과와 남은 일은 [docs/principles-check.md](docs/principles-check.md), 레퍼런스 게임 조사는 [docs/reference-games.md](docs/reference-games.md).
 
 ## 현재 상태 (2026-09-30)
 MVP 구현 진행 중 (자세한 기록은 PROGRESS.md). 미니게임 8개(React 오버레이), 의뢰판·퀴즈·요약, `/admin`(폼 편집기 + 의뢰판 드래그 배치), Codex 그림 적용까지 들어가 있다. 계획서(`docs/superpowers/plans/`)는 만들지 않고 스펙에서 바로 구현했다. 그림 목록은 `docs/art-todo.md`, 남은 일은 PROGRESS.md 끝 절.
