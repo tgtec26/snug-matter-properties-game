@@ -2,23 +2,23 @@
 
 import { useEffect } from 'react';
 import { useGameStore } from '@/game/store';
-import { playBgm, stopBgm, unlockAudio, type BgmKey } from '@/game/audio';
-import type { Phase } from '@/game/types';
-
-/** 화면 흐름에 맞춰 배경음 전환: 타이틀·의뢰판·요약 / 퀴즈 / 실험(조사·분리) */
-function pickBgm(phase: Phase): BgmKey {
-  if (phase === 'investigate' || phase === 'separate') return 'mole_game';
-  if (phase === 'quiz') return 'quiz-background';
-  return 'start_ending';
-}
+import { useDataStore } from '@/game/dataStore';
+import { playBgm, stopBgm, unlockAudio, setHidden, setAudioConfig, bgmFor } from '@/game/audio';
 
 export function AudioRunner() {
   const phase = useGameStore(s => s.phase);
-  useEffect(() => { playBgm(pickBgm(phase)); }, [phase]);
+  const audio = useDataStore(s => s.audio);
+  useEffect(() => { setAudioConfig(audio); }, [audio]);
+  useEffect(() => { playBgm(bgmFor(phase)); }, [phase]);
   useEffect(() => {
+    const onVis = () => setHidden(document.hidden);
     window.addEventListener('pointerdown', unlockAudio);
     window.addEventListener('keydown', unlockAudio);
-    return () => { window.removeEventListener('pointerdown', unlockAudio); window.removeEventListener('keydown', unlockAudio); stopBgm(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => {
+      window.removeEventListener('pointerdown', unlockAudio); window.removeEventListener('keydown', unlockAudio);
+      document.removeEventListener('visibilitychange', onVis); stopBgm();
+    };
   }, []);
   return null;
 }

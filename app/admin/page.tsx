@@ -5,7 +5,7 @@ import JsonForm from './_components/JsonForm';
 import BoardEditor from './_components/BoardEditor';
 
 const TABS = [
-  ['substances', '물질'], ['missions', '의뢰'], ['board', '의뢰판 배치'], ['minigame-config', '미니게임 수치'], ['dialog-config', '대화'], ['quiz-pool', '퀴즈'],
+  ['substances', '물질'], ['missions', '의뢰'], ['board', '의뢰판 배치'], ['minigame-config', '미니게임 수치'], ['dialog-config', '대화'], ['quiz-pool', '퀴즈'], ['audio-config', '소리'],
 ] as const;
 type Tab = (typeof TABS)[number][0];
 const fileOf = (t: Tab) => (t === 'board' ? 'missions' : t);

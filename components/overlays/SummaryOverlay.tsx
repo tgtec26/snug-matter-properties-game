@@ -5,6 +5,7 @@ import { toPng } from 'html-to-image';
 import { useGameStore } from '@/game/store';
 import { useDataStore } from '@/game/dataStore';
 import { loadDex } from '@/game/dex';
+import { playSfx } from '@/game/audio';
 import { formatMs } from '@/components/HUD';
 import { Backdrop, SubstanceIcon } from '@/components/ui';
 
@@ -36,6 +37,7 @@ function Summary() {
       const a = document.createElement('a'); a.href = url; a.download = '물질분리공방_나의결과.png'; a.click();
     } finally { setBusy(false); }
   };
+  useEffect(() => { playSfx('finale'); }, []);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.repeat) return; if (e.key === 'Enter') useGameStore.getState().restartRun(); };
     window.addEventListener('keydown', onKey);

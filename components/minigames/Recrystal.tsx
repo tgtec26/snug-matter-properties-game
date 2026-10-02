@@ -193,6 +193,7 @@ export function Recrystal({ mixture, obtains, leaves, config, onDone }: Separate
   const onBeakerDown = (e: React.PointerEvent) => {
     if (!draggable || locked()) return;
     e.currentTarget.setPointerCapture(e.pointerId);
+    playSfx('pick');
     setHeat(false);
     const p = stagePt(e);
     const o = phase === 'heat' ? B0 : IN_ICE;

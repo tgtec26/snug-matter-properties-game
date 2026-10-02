@@ -116,6 +116,7 @@ export function HeatingCurve({ targets, config, onDone }: InvestigateProps) {
   const onDown = (e: React.PointerEvent) => {
     if (phase !== 'place' || locked.current) return;
     (e.currentTarget as Element).setPointerCapture(e.pointerId);
+    playSfx('pick');
     setDrag(toLocal(e));
   };
   const onMove = (e: React.PointerEvent) => { if (drag) setDrag(toLocal(e)); };

@@ -10,6 +10,8 @@ const LABEL: Record<string, string> = {
   card: '도감 카드', example: '생활 예', page: '교과서 쪽', reference: '자료실 전용', title: '의뢰 이름', place: '장소', npc: '의뢰인', kind: '종류', components: '혼합물 성분',
   investigate: '조사 미니게임', targets: '조사 대상', steps: '분리 단계', method: '방법', obtains: '얻는 물질', leaves: '남는 물질', intro: '수락 대사', outro: '완료 대사', pos: '지도 위치', x: 'x', y: 'y',
   mission: '의뢰', q: '문제', choices: '보기', answer: '정답 번호(0부터)', why: '해설', reasons: '불가 안내 문구', hints: '갈림길 힌트', npcs: '의뢰인 정보',
+  bgmVolume: '배경음 음량 (0~1)', sfxVolume: '효과음 음량 (0~1)', minGapMs: '같은 효과음 최소 간격 (ms)', bgm: '배경음 파일', sfx: '효과음 파일',
+  start: '시작·의뢰판·결과', play: '조사·분리 실험', quiz: '퀴즈', success: '성공', correct: '정답', error: '오답', pick: '집기', finale: '최종 피날레',
 };
 const label = (k: string) => LABEL[k] ?? k;
 const summary = (v: J, i: number): string => {

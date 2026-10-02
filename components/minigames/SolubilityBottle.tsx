@@ -164,6 +164,7 @@ export function SolubilityBottle({ targets, config, onDone }: InvestigateProps) 
   const startDrag = (kind: Drag['kind'], ox: number, oy: number) => (e: React.PointerEvent) => {
     if (performance.now() < lockUntil.current || phase !== 'work') return;
     e.currentTarget.setPointerCapture(e.pointerId);
+    playSfx('pick');
     const p = stagePt(e);
     setDrag({ kind, x: p.x, y: p.y, dx: ox - p.x, dy: oy - p.y });
   };

@@ -1,0 +1,17 @@
+{
+  "bgmVolume": 0.4,
+  "sfxVolume": 0.7,
+  "minGapMs": 90,
+  "bgm": {
+    "start": "/assets/audio/start_ending.mp3",
+    "play": "/assets/audio/mole_game.mp3",
+    "quiz": "/assets/audio/quiz-background.mp3"
+  },
+  "sfx": {
+    "success": "/assets/audio/success.mp3",
+    "correct": "/assets/audio/correct.mp3",
+    "error": "/assets/audio/error.mp3",
+    "pick": "/assets/audio/book_pickup.mp3",
+    "finale": "/assets/audio/770801_fanfare.mp3"
+  }
+}

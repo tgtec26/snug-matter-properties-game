@@ -177,6 +177,7 @@ export function FloatSieve({ mixture, obtains, config, onDone }: SeparateProps) 
     const kind = (e.target as SVGElement).dataset?.hit ?? (g.current.queue.length ? 'bowl' : undefined);
     if (!kind || locked() || g.current.result) return;
     e.currentTarget.setPointerCapture(e.pointerId);
+    playSfx('pick');
     const q = toLocal(e); const s = g.current;
     s.homing = false;
     drag.current = { kind, x0: q.x, y0: q.y, a0: s.angle, dx: s.sieve.x - q.x, dy: s.sieve.y - q.y };

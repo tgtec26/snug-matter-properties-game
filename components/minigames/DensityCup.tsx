@@ -139,6 +139,7 @@ export function DensityCup({ targets, config, onDone }: InvestigateProps) {
   const bottleDown = (e: React.PointerEvent, i: number) => {
     if (!unlocked() || phase !== 'pour') return;
     e.currentTarget.setPointerCapture(e.pointerId);
+    playSfx('pick');
     drag.current = { i, y0: toStage(e).y, t0: sim.current.tilt[i] };
     setTouched(true);
   };

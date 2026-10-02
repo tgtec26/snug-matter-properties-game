@@ -149,6 +149,7 @@ export function Funnel({ mixture, obtains, config, onDone }: SeparateProps) {
     const kind = (e.target as SVGElement).dataset?.hit;
     if (!kind || locked()) return;
     e.currentTarget.setPointerCapture(e.pointerId);
+    playSfx('pick');
     const q = toLocal(e);
     drag.current = { kind, x0: q.x, y0: q.y, a0: g.current.angle };
     if (kind === 'faucet') startHold();

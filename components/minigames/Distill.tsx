@@ -133,6 +133,7 @@ export function Distill({ obtains, saltRemains, config, onDone }: SeparateProps)
     if (locked.current) return;
     if ((kind === 'chip' && (chip.current || phase.current !== 'run')) || (kind === 'dial' && phase.current !== 'run')) return;
     (e.currentTarget as Element).setPointerCapture(e.pointerId);
+    playSfx('pick');
     const p = loc(e); setDrag({ kind, ...p });
     if (kind === 'dial') dialSet(p);
   };

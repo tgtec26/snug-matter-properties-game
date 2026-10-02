@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
-export const DATA_FILES = ['substances', 'missions', 'minigame-config', 'dialog-config', 'quiz-pool'] as const;
+export const DATA_FILES = ['substances', 'missions', 'minigame-config', 'dialog-config', 'quiz-pool', 'audio-config'] as const;
 const isDataFile = (f: string) => (DATA_FILES as readonly string[]).includes(f);
 const filePath = (f: string) => path.resolve(process.cwd(), 'public', 'data', `${f}.json`);
 

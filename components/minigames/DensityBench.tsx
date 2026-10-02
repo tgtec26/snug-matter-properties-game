@@ -135,6 +135,7 @@ export function DensityBench({ targets, config, onDone }: InvestigateProps) {
   const onPieceDown = (e: React.PointerEvent, id: string, home: { x: number; y: number }) => {
     if (now() < lockRef.current || stages[id] === 'done') return;
     e.currentTarget.setPointerCapture(e.pointerId);
+    playSfx('pick');
     const p = toStage(e);
     dragOff.current = { dx: home.x - p.x, dy: home.y - p.y, from: stages[id] };
     setDrag({ id, x: home.x, y: home.y });
