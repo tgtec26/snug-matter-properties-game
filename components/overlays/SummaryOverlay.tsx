@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { toPng } from 'html-to-image';
+import { toBlob } from 'html-to-image';
 import { useGameStore } from '@/game/store';
 import { useDataStore } from '@/game/dataStore';
 import { loadDex } from '@/game/dex';
 import { playSfx } from '@/game/audio';
 import { formatMs } from '@/components/HUD';
 import { Backdrop, SubstanceIcon } from '@/components/ui';
+import { PortfolioSubmitPanel } from '@/components/PortfolioSubmitPanel';
 
 const METHOD = { density: '밀도 차', solubility: '용해도 차', boiling: '끓는점 차' } as const;
 
@@ -29,12 +30,25 @@ function Summary() {
   const total = Object.values(s.records).reduce((a, r) => a + r.stars, 0);
   const name = (id: string) => subs.find(x => x.id === id)?.name ?? id;
 
+  const makePngBlob = async () => {
+    if (!card.current) throw new Error('missing-card');
+    const blob = await toBlob(card.current, {
+      pixelRatio: 2,
+      backgroundColor: '#ffffff',
+      filter: node => !(node instanceof HTMLElement && node.dataset.exportExclude === 'true'),
+    });
+    if (!blob) throw new Error('empty-card');
+    return blob;
+  };
+
   const save = async () => {
-    if (!card.current || busy) return;
+    if (busy) return;
     setBusy(true);
     try {
-      const url = await toPng(card.current, { pixelRatio: 2, backgroundColor: '#ffffff' });
+      const blob = await makePngBlob();
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = '물질분리공방_나의결과.png'; a.click();
+      URL.revokeObjectURL(url);
     } finally { setBusy(false); }
   };
   useEffect(() => { playSfx('finale'); }, []);
@@ -83,6 +97,11 @@ function Summary() {
             </div>
           </div>
         </div>
+        <PortfolioSubmitPanel
+          makePngBlob={makePngBlob}
+          title="물질 분리 공방 결과"
+          description={`별 ${total}개, 소요 ${formatMs(s.elapsedMs)}, 새로 알게 된 물질 ${s.newKnown.length}개`}
+        />
         <div className="mt-4 flex gap-3 justify-end">
           <button onClick={save} disabled={busy} className="rounded-xl bg-white px-6 py-3 text-[20px] font-bold text-slate-900">나의 결과 내려받기</button>
           <button onClick={() => s.reset()} className="rounded-xl border border-white/60 px-6 py-3 text-[20px] text-white">처음으로</button>
